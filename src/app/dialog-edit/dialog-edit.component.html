@@ -1,0 +1,25 @@
+<div mat-dialog-content>
+  <p>Обновления</p>
+  <!-- <mat-form-field appearance="fill">
+    <mat-label>Favorite Animal</mat-label>
+    <input matInput [(ngModel)]="data.type">
+  </mat-form-field> -->
+
+  <mat-form-field appearance="fill">
+    <mat-label>Тип</mat-label>
+    <mat-select [(value)]="data.type">
+      <mat-option *ngFor="let type of typeList" [value]="type">{{type}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Статус</mat-label>
+    <mat-select [(value)]="data.status">
+      <mat-option *ngFor="let status of statusList" [value]="status">{{status}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">Отменить</button>
+  <button mat-button (click)="save()">Сохранить</button>
+</div>

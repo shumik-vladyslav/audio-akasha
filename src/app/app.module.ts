@@ -10,27 +10,16 @@ import {MatTableModule} from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import {MatInputModule} from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
-import {
-  GoogleApiModule,
-  GoogleApiService,
-  GoogleAuthService,
-  NgGapiClientConfig,
-  NG_GAPI_CONFIG,
-  GoogleApiConfig
-} from "ng-gapi";
-
-let gapiClientConfig: NgGapiClientConfig = {
-  client_id: "773332166368-4vss4pijc76ptteg0mt07m0q2le47p3n.apps.googleusercontent.com",
-  discoveryDocs: ["https://analyticsreporting.googleapis.com/$discovery/rest?version=v4"],
-  scope: [
-      "https://www.googleapis.com/auth/analytics.readonly",
-      "https://www.googleapis.com/auth/analytics"
-  ].join(" ")
-};
+import {MatIconModule} from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import {MatDialogModule} from '@angular/material/dialog';
+import { DialogEditDialog } from './dialog-edit/dialog-edit.component';
+import {MatSelectModule} from '@angular/material/select';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    DialogEditDialog
   ],
   imports: [
     BrowserModule,
@@ -42,10 +31,10 @@ let gapiClientConfig: NgGapiClientConfig = {
     MatTableModule,
     MatPaginatorModule,
     MatInputModule,
-    GoogleApiModule.forRoot({
-      provide: NG_GAPI_CONFIG,
-      useValue: gapiClientConfig
-    }),
+    MatIconModule,
+    MatButtonModule,
+    MatDialogModule,
+    MatSelectModule
   ],
   providers: [],
   bootstrap: [AppComponent]
