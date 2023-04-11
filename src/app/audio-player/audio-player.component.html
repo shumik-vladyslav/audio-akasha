@@ -1,0 +1,14 @@
+<audio id="player" [src]="list[index]"></audio>
+{{index}}
+<ul>
+  <li *ngFor="let item of list">{{item}}</li>
+</ul>
+<div>
+  <button (click)="privius()">прошлая</button>
+  <button onclick="document.getElementById('player').play()">Play</button>
+  <button onclick="document.getElementById('player').pause()">Pause</button>
+  <button onclick="document.getElementById('player').volume += 0.1">Vol +</button>
+  <button onclick="document.getElementById('player').volume -= 0.1">Vol -</button>
+  <button (click)="next()">следующая</button>
+
+</div>

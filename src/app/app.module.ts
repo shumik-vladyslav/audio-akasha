@@ -15,10 +15,16 @@ import { MatButtonModule } from '@angular/material/button';
 import {MatDialogModule} from '@angular/material/dialog';
 import { DialogEditDialog } from './dialog-edit/dialog-edit.component';
 import {MatSelectModule} from '@angular/material/select';
+import { ClientComponent } from './client/client.component';
+import { AdminComponent } from './admin/admin.component';
+import { AudioPlayerComponent } from './audio-player/audio-player.component';
 
 @NgModule({
   declarations: [
     AppComponent,
+    AdminComponent,
+    ClientComponent,
+    AudioPlayerComponent,
     DialogEditDialog
   ],
   imports: [
