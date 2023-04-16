@@ -1,4 +1,255 @@
 /* You can add global styles to this file, and also import other style files */
-
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-size: 14px;
+  color: #333;
+  margin: 0;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0 !important;
+}
+button {
+  border: none;
+}
+p {
+  margin: 0;
+}
+body::-webkit-scrollbar {
+  width: 5px;
+}
+body::-webkit-scrollbar-button {
+  background-color: #dbdac2;
+  height: 0;
+}
+body::-webkit-scrollbar-track {
+  background-color: #fff;
+}
+body::-webkit-scrollbar-thumb {
+  height: 56px;
+  background-color: rgba(54, 51, 51, 0.2);
+  border-radius: 5px;
+}
+button:focus {
+  outline: transparent;
+}
+button:hover {
+  cursor: pointer;
+}
+input:focus {
+  outline: transparent;
+}
+p:focus {
+  outline: transparent;
+}
+div:focus {
+  outline: transparent;
+}
+textarea:focus {
+  outline: transparent;
+}
+ul {
+  margin: 0;
+  word-break: break-all;
+}
+.mat-menu-panel {
+  padding: 22px;
+  position: relative;
+  width: 320px;
+  background: #282828;
+}
+.player_wrap {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  height: 90px;
+  justify-content: space-between;
+  padding: 0 16px;
+}
+.player_out_wrap {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #181818;
+  border-top: 1px solid #282828;
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  min-width: 620px;
+  user-select: none;
+}
+.audio {
+  position: relative;
+  background: #1a1529;
+  height: 100vh;
+}
+.curr_colour {
+  fill: hsl(0deg 0% 72.94%);
+  transition: all 0.3s;
+}
+.nav_butt:hover {
+  .curr_colour {
+    fill: #fff;
+    transition: all 0.3s;
+  }
+}
+.side_wrap {
+  display: flex;
+  width: 25%;
+  overflow: hidden;
+  &.end {
+    justify-content: flex-end;
+  }
+}
+.gen {
+  display: flex;
+  align-items: center;
+  margin: 0 10px;
+  background-color: transparent;
+}
+.play_paus {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: #fff;
+  width: 32px;
+  height: 32px;
+  transition: all 0.3s;
+  &:hover {
+    transition: all 0.3s;
+    transform: scale(1.06);
+  }
+}
+.wish_list {
+  display: flex;
+  cursor: pointer;
+  padding: 0 10px;
+}
+.main_buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.play {
+  cursor: pointer;
+  position: relative;
+  left: 0;
+  height: 0;
+  width: 0;
+  border: 7px solid #0000;
+  border-left: 13px solid white;
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+.timeline {
+  background: #5e5e5e;
+  position: relative;
+  box-shadow: 0 2px 10px 0 #0008;
+  width: 300px;
+  border-radius: 2px;
+  height: 4px;
+  transition: 0.3s;
+  margin: 10px 0;
+  .progress {
+    position: relative;
+    border-radius: 2px;
+    background: #fff;
+    width: 0%;
+    height: 100%;
+    transition: 0.3s;
+    p {
+      display: none;
+      position: absolute;
+      top: -4px;
+      right: 0;
+      height: 12px;
+      background-color: #fff;
+      border-radius: 50%;
+      transition: 0.3s;
+    }
+  }
+}
+.timeline-wrap:hover {
+  transition: 0.3s;
+  .progress {
+    background: #1db954;
+    transition: 0.3s;
+    p {
+      display: block;
+      transition: 0.3s;
+    }
+  }
+}
+.line_wrapper {
+  display: flex;
+  align-items: center;
+  padding: 4px 0 0 0;
+}
+.gn {
+  font-size: 0.6875rem;
+  font-weight: 400;
+  color: #87a79a;
+  &.white {
+    color: #fff;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+.time {
+  text-align: center;
+  min-width: 40px;
+}
+.volume-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .volume-slider {
+    background: #5e5e5e;
+    position: relative;
+    box-shadow: 0 2px 10px 0 #0008;
+    width: 93px;
+    border-radius: 2px;
+    height: 3px;
+    transition: 0.3s;
+    margin: 10px 0 10px 10px;
+    .volume-percentage {
+      position: relative;
+      border-radius: 2px;
+      background: #fff;
+      width: 50%;
+      height: 100%;
+      transition: 0.3s;
+      p {
+        display: none;
+        position: absolute;
+        top: -4px;
+        right: 0;
+        width: 12px;
+        height: 12px;
+        background-color: #fff;
+        border-radius: 50%;
+        transition: 0.3s;
+      }
+    }
+  }
+  &:hover {
+    .volume-percentage {
+      background: #1db954;
+      transition: 0.3s;
+      p {
+        display: block;
+        transition: 0.3s;
+      }
+    }
+  }
+}
