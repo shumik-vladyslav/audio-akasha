@@ -1,4 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
+@import url("https://fonts.googleapis.com/css2?family=Merriweather&display=swap");
 html,
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
@@ -252,4 +253,119 @@ ul {
       }
     }
   }
+}
+.header_m {
+  font-family: "Merriweather", sans-serif;
+  &.medium {
+    font-size: 18px;
+  }
+  &.sm {
+    font-size: 14px;
+  }
+  &.bold {
+    font-weight: 600;
+  }
+  &.center {
+    margin: 15px auto !important;
+    text-align: center;
+  }
+}
+table {
+  border: 2px solid rgb(31, 31, 31);
+  border-collapse: collapse;
+  th,
+  td {
+    border: 2px solid black;
+    padding: 3px;
+  }
+  th.grey-bord {
+    border-right: 2px solid rgb(192, 189, 189);
+    border-bottom: 2px solid rgb(192, 189, 189);
+  }
+  th.grey-border {
+    border-right: 2px solid rgb(192, 189, 189);
+  }
+  th.grey-bord:last-child {
+    border-right: 2px solid rgb(31, 31, 31);
+  }
+  th.grey-border:last-child {
+    border-right: 2px solid rgb(31, 31, 31);
+  }
+}
+div.mat-form-field-wrapper {
+  padding: 0;
+}
+.mat-form-field-appearance-fill .mat-form-field-flex {
+  padding: 0 !important;
+  background-color: transparent !important;
+}
+.mat-form-field-appearance-fill .mat-form-field-infix {
+  padding: 0 !important;
+}
+.mat-form-field-infix {
+  width: 135px !important;
+}
+.mat-form-field-underline {
+  display: none !important;
+}
+.mat-select-trigger {
+  font-family: "Merriweather", sans-serif;
+  font-size: 12px;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+td.blue {
+  background-color: #9bc6ea;
+}
+td.yellow {
+  background-color: #fce59a;
+}
+td.green {
+  background-color: #b7e0cb;
+}
+
+.mat-select-panel::-webkit-scrollbar {
+  width: 5px;
+}
+.mat-select-panel::-webkit-scrollbar-button {
+  background-color: #dbdac2;
+  height: 0;
+}
+.mat-select-panel::-webkit-scrollbar-track {
+  background-color: #fff;
+}
+.mat-select-panel::-webkit-scrollbar-thumb {
+  height: 56px;
+  background-color: rgba(54, 51, 51, 0.2);
+  border-radius: 5px;
+}
+.mat-select.ng-dirty.ng-touched {
+  .mat-select-trigger {
+    display: inline-table !important;
+  }
+}
+input.mat-input-element {
+  height: 38px;
+  padding: 0 10px;
+  box-sizing: border-box;
+  background: aliceblue;
+}
+.inp_wrap {
+  position: sticky;
+  top: 0;
+  background-color: black;
+  z-index: 1;
+}
+.mat-select-panel.mat-primary {
+  min-width: calc(100% + 30px) !important;
+}
+button.b_gn {
+  margin-right: 10px;
+}
+.b_wrap {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: 20px auto;
 }

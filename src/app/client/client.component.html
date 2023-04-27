@@ -1,54 +1,86 @@
 <div>
+  <p class="header_m medium bold center">
+    Табель служения на неделю {{ datesRange }}
+  </p>
   <table>
     <thead>
       <tr>
-        <th>#</th>
-        <th>Имя</th>
-        <th *ngFor="let day of daysOfWeek">{{ day }}</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let item of items;let i = index">
-        <td>{{i+1}}</td>
-        <td>{{item.name}}</td>
-        <td>{{item.d1?.join(', ')}}</td>
-        <td>{{item.d2?.join(', ')}}</td>
-        <td>{{item.d3?.join(', ')}}</td>
-        <td>{{item.d4?.join(', ')}}</td>
-        <td>{{item.d5?.join(', ')}}</td>
-        <td>{{item.d6?.join(', ')}}</td>
-        <td>{{item.d7?.join(', ')}}</td>
+        <th rowspan="3" class="header_m sm bold">№</th>
+        <th rowspan="2" class="header_m sm bold">Имя</th>
+        <th rowspan="2" class="header_m sm bold">Отв. на неделе</th>
+        <th class="header_m sm bold" *ngFor="let day of daysOfWeek">
+          {{ day }}
+        </th>
       </tr>
       <tr>
-        <td></td>
-        <td> 
+        <th class="header_m sm bold grey-bord" *ngFor="let date of dates">
+          {{ date }}
+        </th>
+      </tr>
+      <tr>
+        <th class="grey-border">
           <mat-form-field appearance="fill">
             <mat-label>Имя</mat-label>
             <mat-select [(ngModel)]="name">
-             
-              <input #multiUserSearch type="text" autocomplete="off" matInput placeholder="Поиск" [(ngModel)]="searchValue.name"  (keyup.enter)="onEnter($event)"/>
-          
-              <mat-option *ngFor="let obj of names | filter: searchValue.name" [value]="obj.name">{{obj.name}}</mat-option>
+              <input
+                #multiUserSearch
+                type="text"
+                autocomplete="off"
+                matInput
+                placeholder="Поиск"
+                [(ngModel)]="searchValue.name"
+                (keyup.enter)="onEnter($event)"
+              />
+              <mat-option
+                *ngFor="let obj of names | filter : searchValue.name"
+                [value]="obj.name"
+                >{{ obj.name }}</mat-option
+              >
             </mat-select>
           </mat-form-field>
-        </td>
-        <td *ngFor="let day of days">
+        </th>
+        <th class="grey-border" *ngFor="let day of days">
           <mat-form-field appearance="fill">
             <mat-label>Служение</mat-label>
             <mat-select multiple [(ngModel)]="day.value">
-              
-              <input #multiUserSearch type="text" autocomplete="off" matInput placeholder="Поиск"  [(ngModel)]="searchValue.d1"/>
-          
-              <mat-option *ngFor="let option of options | filter: searchValue.d1" [value]="option.name">{{option.name}}</mat-option>
+              <div class="inp_wrap">
+                <input
+                  #multiUserSearch
+                  type="text"
+                  autocomplete="off"
+                  matInput
+                  placeholder="Поиск"
+                  [(ngModel)]="searchValue.d1"
+                />
+              </div>
+              <mat-option
+                *ngFor="let option of options | filter : searchValue.d1"
+                [value]="option.name"
+                >{{ option.name }}</mat-option
+              >
             </mat-select>
           </mat-form-field>
-        </td>
-    
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of items; let i = index">
+        <td>{{ i + 1 }}</td>
+        <td class="header_m sm bold">{{ item.name }}</td>
+        <td class="yellow">{{ item.d0?.join(", ") }}</td>
+        <td>{{ item.d1?.join(", ") }}</td>
+        <td>{{ item.d2?.join(", ") }}</td>
+        <td class="blue">{{ item.d3?.join(", ") }}</td>
+        <td>{{ item.d4?.join(", ") }}</td>
+        <td>{{ item.d5?.join(", ") }}</td>
+        <td>{{ item.d6?.join(", ") }}</td>
+        <td class="green">{{ item.d7?.join(", ") }}</td>
       </tr>
     </tbody>
   </table>
-  <button (click)="add()">Add</button>
-  <button (click)="addSpace()">addSpace</button>
-  <button (click)="exel()">exel</button>
-  
+  <div class="b_wrap">
+    <button class="b_gn" mat-raised-button (click)="add()">Add</button>
+    <button class="b_gn" mat-raised-button (click)="addSpace()">addSpace</button>
+    <button mat-raised-button (click)="exel()">exel</button>
+  </div>
 </div>
