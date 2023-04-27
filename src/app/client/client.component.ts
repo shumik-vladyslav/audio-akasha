@@ -57,5 +57,64 @@ export class ClientComponent {
   validate;
   exel() {
     this.validate = true;
+    this.exportToCSV();
+  };
+
+  exportToCSV() {
+    let csvContent = '';
+    csvContent += '№, Имя,'
+    this.daysOfWeek.forEach((day: string) => {
+      csvContent += day + ",";
+    });
+    csvContent += '\n';
+    this.items.forEach((item, index) => {
+      csvContent += index + 1 + ',';
+      csvContent += item.name + ',';
+      if((item.d1 as Array<string>)?.length) {
+        csvContent += item.d1.join(' ') + ',';
+      } else {
+        csvContent += '-,';
+      };
+      if((item.d2 as Array<string>)?.length) {
+        csvContent += item.d2.join(' ') + ',';
+      } else {
+        csvContent += '-,';
+      };
+      if((item.d3 as Array<string>)?.length) {
+        csvContent += item.d3.join(' ') + ',';
+      } else {
+        csvContent += '-,';
+      };
+      if((item.d4 as Array<string>)?.length) {
+        csvContent += item.d4.join(' ') + ',';
+      } else {
+        csvContent += '-,';
+      };
+      if((item.d5 as Array<string>)?.length) {
+        csvContent += item.d5.join(' ') + ',';
+      } else {
+        csvContent += '-,';
+      };
+      if((item.d6 as Array<string>)?.length) {
+        csvContent += item.d6.join(' ') + ',';
+      } else {
+        csvContent += '-,';
+      };
+      if((item.d7 as Array<string>)?.length) {
+        csvContent += item.d7.join(' ') + ',';
+      } else {
+        csvContent += '-,';
+      };
+      csvContent += '\n';
+    });
+    this.writeContents(csvContent, 'CSV_File.csv', '');
+    
+  }
+  writeContents(content: any, fileName: string, contentType: string) {
+    const a = document.createElement('a');
+    const file = new Blob([content], { type: contentType });
+    a.href = URL.createObjectURL(file);
+    a.download = fileName;
+    a.click();
   }
 }
