@@ -1,3 +1,54 @@
 <div>
-  <audio-player></audio-player>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Имя</th>
+        <th *ngFor="let day of daysOfWeek">{{ day }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of items;let i = index">
+        <td>{{i+1}}</td>
+        <td>{{item.name}}</td>
+        <td>{{item.d1?.join(', ')}}</td>
+        <td>{{item.d2?.join(', ')}}</td>
+        <td>{{item.d3?.join(', ')}}</td>
+        <td>{{item.d4?.join(', ')}}</td>
+        <td>{{item.d5?.join(', ')}}</td>
+        <td>{{item.d6?.join(', ')}}</td>
+        <td>{{item.d7?.join(', ')}}</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td> 
+          <mat-form-field appearance="fill">
+            <mat-label>Имя</mat-label>
+            <mat-select [(ngModel)]="name">
+             
+              <input #multiUserSearch type="text" autocomplete="off" matInput placeholder="Поиск" [(ngModel)]="searchValue.name"  (keyup.enter)="onEnter($event)"/>
+          
+              <mat-option *ngFor="let obj of names | filter: searchValue.name" [value]="obj.name">{{obj.name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </td>
+        <td *ngFor="let day of days">
+          <mat-form-field appearance="fill">
+            <mat-label>Служение</mat-label>
+            <mat-select multiple [(ngModel)]="day.value">
+              
+              <input #multiUserSearch type="text" autocomplete="off" matInput placeholder="Поиск"  [(ngModel)]="searchValue.d1"/>
+          
+              <mat-option *ngFor="let option of options | filter: searchValue.d1" [value]="option.name">{{option.name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </td>
+    
+      </tr>
+    </tbody>
+  </table>
+  <button (click)="add()">Add</button>
+  <button (click)="addSpace()">addSpace</button>
+  <button (click)="exel()">exel</button>
+  
 </div>
