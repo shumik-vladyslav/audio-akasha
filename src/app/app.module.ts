@@ -21,6 +21,18 @@ import { AudioPlayerComponent } from './audio-player/audio-player.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FilterPipe } from './filter.pipe';
 
+import { AngularFireModule } from "@angular/fire";
+import { AngularFireAnalyticsModule } from "@angular/fire/analytics";
+import { AngularFirestoreModule } from "@angular/fire/firestore";
+import { UsersComponent } from './users/users.component';
+export const firebaseConfig = {
+  apiKey: "AIzaSyAS1JBSZnqIXE_XWUALKnCowDY2coJEeNE",
+  authDomain: "audio-akasha.firebaseapp.com",
+  projectId: "audio-akasha",
+  storageBucket: "audio-akasha.appspot.com",
+  messagingSenderId: "849398704426",
+  appId: "1:849398704426:web:684cc0331984e339009653"
+};
 @NgModule({
   declarations: [
     AppComponent,
@@ -28,7 +40,8 @@ import { FilterPipe } from './filter.pipe';
     AdminComponent,
     ClientComponent,
     AudioPlayerComponent,
-    DialogEditDialog
+    DialogEditDialog,
+    UsersComponent
   ],
   imports: [
     BrowserModule,
@@ -46,7 +59,10 @@ import { FilterPipe } from './filter.pipe';
     MatButtonModule,
     MatDialogModule,
     MatSelectModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    AngularFireAnalyticsModule,
+    AngularFirestoreModule,
+    AngularFireModule.initializeApp(firebaseConfig),
   ],
   providers: [],
   bootstrap: [AppComponent]

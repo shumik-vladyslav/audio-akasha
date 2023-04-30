@@ -1,0 +1,53 @@
+<div class="wrapper">
+    <h1 class="main-header">Список пользователей</h1>
+    <div class="content">
+        <div class="add-user-container">
+            <h2>Добавить пользователя</h2>
+            <div class="flex items" [formGroup]="userForm">
+                <div class="flex item-container">
+                    <p class="item-info">Имя</p>
+                    <!-- <input type="text"> -->
+                    <mat-form-field class="example-full-width" >
+                        <mat-label>Имя</mat-label>
+                        <input matInput placeholder="" value="" formControlName="name">
+                    </mat-form-field>
+                </div>
+                <div class="flex item-container">
+                    <p class="item-info">Статус</p>
+                    <mat-form-field appearance="fill" >
+                        <mat-label > выберите статус</mat-label>
+                        <mat-select formControlName="status">
+
+                            <mat-option *ngFor="let obj of statuses " [value]="obj.name">{{obj.name}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+            <button mat-raised-button color="primary" class="add-button" [disabled]="!userForm.valid" (click)="createUser()">Добавиь пользователя</button>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead style=" position: sticky; top: 0; background: #ffffff;">
+                    <tr>
+                        <th>Имя</th>
+                        <th>Статус</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let user of users; let i = index">
+                        <td>
+                            <p>
+                               {{i + 1}} {{user.name}}
+                            </p>
+                        </td>
+                        <td>
+                            <p>{{user.role}}</p>
+                        </td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
