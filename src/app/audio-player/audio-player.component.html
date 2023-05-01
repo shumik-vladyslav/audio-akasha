@@ -3,7 +3,9 @@
     <source [src]="list[index]" type="audio/mp3" />
   </audio>
   <ul>
-    <li class="gn" *ngFor="let item of list">{{ item }}</li>
+    <li class="gn" *ngFor="let item of list; let index = index">
+      {{ index + 1 }}. {{ item?.substring(item.lastIndexOf("/") + 1) }}
+    </li>
   </ul>
   <div class="player_out_wrap">
     <div class="line_track">
@@ -23,7 +25,12 @@
       </div>
       <div>
         <div class="main_buttons">
-          <button #tooltip="matTooltip" matTooltip="Previous" class="gen nav_butt" (click)="previous()">
+          <button
+            #tooltip="matTooltip"
+            matTooltip="Previous"
+            class="gen nav_butt"
+            (click)="previous()"
+          >
             <svg
               role="img"
               height="16"
@@ -39,7 +46,13 @@
             </svg>
           </button>
           <div class="toggle-play">
-            <button #tooltip="matTooltip" matTooltip="Play" id="play-icon" *ngIf="!play" class="gen play_paus">
+            <button
+              #tooltip="matTooltip"
+              matTooltip="Play"
+              id="play-icon"
+              *ngIf="!play"
+              class="gen play_paus"
+            >
               <!-- onclick="document.getElementById('player').play()" -->
               <svg
                 role="img"
@@ -54,7 +67,12 @@
                 ></path>
               </svg>
             </button>
-            <button #tooltip="matTooltip" matTooltip="Pause" *ngIf="play" class="gen play_paus">
+            <button
+              #tooltip="matTooltip"
+              matTooltip="Pause"
+              *ngIf="play"
+              class="gen play_paus"
+            >
               <!-- onclick="document.getElementById('player').pause()" -->
               <svg
                 role="img"
@@ -70,7 +88,12 @@
               </svg>
             </button>
           </div>
-          <button #tooltip="matTooltip" matTooltip="Next" class="gen nav_butt" (click)="next()">
+          <button
+            #tooltip="matTooltip"
+            matTooltip="Next"
+            class="gen nav_butt"
+            (click)="next()"
+          >
             <svg
               role="img"
               height="16"
@@ -105,7 +128,12 @@
         </div>
       </div>
       <div class="side_wrap end">
-        <div [matMenuTriggerFor]="orderList" #tooltip="matTooltip" matTooltip="Order" class="wish_list">
+        <div
+          [matMenuTriggerFor]="orderList"
+          #tooltip="matTooltip"
+          matTooltip="Order"
+          class="wish_list"
+        >
           <p class="gen nav_butt">
             <svg
               role="img"
@@ -125,8 +153,10 @@
         <div class="controls">
           <div class="volume-container">
             <div class="volume-button">
-              <p #tooltip="matTooltip" matTooltip="Mute"
-                *ngIf="!audio.muted && audio.volume >= .6"
+              <p
+                #tooltip="matTooltip"
+                matTooltip="Mute"
+                *ngIf="!audio.muted && audio.volume >= 0.6"
                 class="gen nav_butt"
               >
                 <svg
@@ -148,8 +178,10 @@
                   ></path>
                 </svg>
               </p>
-              <p #tooltip="matTooltip" matTooltip="Mute"
-                *ngIf="!audio.muted && audio.volume < .6"
+              <p
+                #tooltip="matTooltip"
+                matTooltip="Mute"
+                *ngIf="!audio.muted && audio.volume < 0.6"
                 class="gen nav_butt"
               >
                 <svg
@@ -168,7 +200,12 @@
                   ></path>
                 </svg>
               </p>
-              <p #tooltip="matTooltip" matTooltip="Unmute" *ngIf="audio.muted" class="gen nav_butt">
+              <p
+                #tooltip="matTooltip"
+                matTooltip="Unmute"
+                *ngIf="audio.muted"
+                class="gen nav_butt"
+              >
                 <svg
                   role="presentation"
                   height="16"
@@ -205,7 +242,9 @@
 <mat-menu #orderList="matMenu">
   <ng-template matMenuContent>
     <div>
-      <p class="gn" *ngFor="let item of list">{{ item }}</p>
+      <p class="gn" *ngFor="let item of list; let index = index">
+        {{ index + 1 }}. {{ item?.substring(item.lastIndexOf("/") + 1) }}
+      </p>
     </div>
   </ng-template>
 </mat-menu>
