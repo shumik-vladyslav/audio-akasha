@@ -24,14 +24,6 @@ import { FilterPipe } from './filter.pipe';
 import { AngularFireModule } from "@angular/fire";
 import { AngularFireAnalyticsModule } from "@angular/fire/analytics";
 import { AngularFirestoreModule } from "@angular/fire/firestore";
-// import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
-
-// import { provideFirebaseApp, initializeApp } from '@angular/fire/app';        
-// import { getAuth, provideAuth } from '@angular/fire/auth';        
-// import { getFirestore, provideFirestore } from '@angular/fire/firestore';        
-// import { getStorage, provideStorage } from '@angular/fire/storage';        
-// import { getAnalytics, provideAnalytics } from '@angular/fire/analytics'; 
-
 import { UsersComponent } from './users/users.component';
 export const firebaseConfig = {
   apiKey: "AIzaSyAS1JBSZnqIXE_XWUALKnCowDY2coJEeNE",
