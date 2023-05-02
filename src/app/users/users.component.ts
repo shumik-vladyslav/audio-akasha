@@ -43,17 +43,26 @@ export class UsersComponent implements OnInit, OnDestroy {
       
       this.users = users;
     });
-  }
+  };
   
   ngOnDestroy(): void {
     this.unsubscribeAll$.next();
     this.unsubscribeAll$.complete();
-  }
+  };
 
   createUser() {
     const form = this.userForm.value;
-    const user = new User('new', form.name, form.status);
+    const user = new User('new', form.name, form.status, true);
     this.firestore.addUser(user);
     this.userForm.reset();
+  };
+
+  deleteUser(user) {
+    this.firestore.deleteUser(user);
+  };
+
+  changeActivity(user) {
+    user.checked = !user.checked;
+    this.firestore.updateUser(user);
   }
 }

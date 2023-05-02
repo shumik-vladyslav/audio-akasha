@@ -7,15 +7,15 @@
                 <div class="flex item-container">
                     <p class="item-info">Имя</p>
                     <!-- <input type="text"> -->
-                    <mat-form-field class="example-full-width" >
+                    <mat-form-field class="example-full-width">
                         <mat-label>Имя</mat-label>
                         <input matInput placeholder="" value="" formControlName="name">
                     </mat-form-field>
                 </div>
                 <div class="flex item-container">
                     <p class="item-info">Статус</p>
-                    <mat-form-field appearance="fill" >
-                        <mat-label > выберите статус</mat-label>
+                    <mat-form-field appearance="fill">
+                        <mat-label> выберите статус</mat-label>
                         <mat-select formControlName="status">
 
                             <mat-option *ngFor="let obj of statuses " [value]="obj.name">{{obj.name}}</mat-option>
@@ -23,7 +23,8 @@
                     </mat-form-field>
                 </div>
             </div>
-            <button mat-raised-button color="primary" class="add-button" [disabled]="!userForm.valid" (click)="createUser()">Добавиь пользователя</button>
+            <button mat-raised-button color="primary" class="add-button" [disabled]="!userForm.valid"
+                (click)="createUser()">Добавиь пользователя</button>
         </div>
         <div class="table-container">
             <table>
@@ -31,19 +32,29 @@
                     <tr>
                         <th>Имя</th>
                         <th>Статус</th>
+                        <th>Активный</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr *ngFor="let user of users; let i = index">
                         <td>
                             <p>
-                             {{user.name}}
+                                {{user.name}}
                             </p>
                         </td>
                         <td>
                             <p>{{user.role}}</p>
                         </td>
-
+                        <td>
+                            <div class="flex center">
+                              <mat-checkbox class="example-margin" [checked]="user?.checked" (change)="changeActivity(user)"></mat-checkbox>  
+                            </div>
+                            
+                        </td>
+                        <td>
+                            <button mat-raised-button color="warn" class="add-button"
+                                (click)="deleteUser(user)">Удалить</button>
+                        </td>
                     </tr>
                 </tbody>
             </table>

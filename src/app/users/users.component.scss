@@ -53,6 +53,10 @@ table {
 .flex {
     display: flex;
 }
+.center {
+    align-items: center;
+    justify-content: center;
+}
 
 .items {
     display: flex;

@@ -17,7 +17,7 @@ export class FirestoreService {
       return actions.map(a => {
         const data = a.payload.doc.data() as any;
         const id = a.payload.doc.id;
-        return new User(id, data.name, data.role);
+        return new User(id, data.name, data.role, data?.checked);
       });
     }))
   }
@@ -25,20 +25,39 @@ export class FirestoreService {
   addUser(user: User) {
     this.angularFirestore.collection('users').add({
       name: user.name,
-      role: user.role
+      role: user.role,
+      checked: user.checked
     })
   }
-  
+
+  deleteUser(user: User) {
+    this.angularFirestore.collection('users').doc(user.id).delete().then(() => {
+      console.log("deleted");
+    })
+  }
+
+  updateUser(user: User) {
+    this.angularFirestore.collection('users').doc(user.id).update({
+      name: user.name,
+      role: user.role,
+      checked: user.checked
+    }).then(() => {
+      console.log("updated");
+    })
+  }
+
 }
 export class User {
-  constructor(id: string, name: string, role) {
+  constructor(id: string, name: string, role, checked: boolean) {
     this.id = id;
     this.name = name;
     this.role = role;
+    this.checked = checked;
   }
   id: string;
   name: string;
   role: Role;
+  checked: boolean;
 }
 // монах, послушник, кандидат, брахмачари, мирянин
 export enum Role {

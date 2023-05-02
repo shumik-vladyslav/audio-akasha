@@ -13,6 +13,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { DialogEditDialog } from './dialog-edit/dialog-edit.component';
 import { MatSelectModule } from '@angular/material/select';
 import { ClientComponent } from './client/client.component';
@@ -59,6 +60,7 @@ export const firebaseConfig = {
     MatButtonModule,
     MatDialogModule,
     MatSelectModule,
+    MatCheckboxModule,
     ReactiveFormsModule,
     AngularFireAnalyticsModule,
     AngularFirestoreModule,
