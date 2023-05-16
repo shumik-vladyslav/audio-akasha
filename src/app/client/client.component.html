@@ -1,4 +1,4 @@
-<div>
+<div class="client-main-component">
   <p class="header_m medium bold center">
     Табель служения на неделю {{ datesRange }}
   </p>
@@ -22,20 +22,10 @@
           <mat-form-field appearance="fill">
             <mat-label>Имя</mat-label>
             <mat-select [(ngModel)]="name">
-              <input
-                #multiUserSearch
-                type="text"
-                autocomplete="off"
-                matInput
-                placeholder="Поиск"
-                [(ngModel)]="searchValue.name"
-                (keyup.enter)="onEnter($event)"
-              />
-              <mat-option
-                *ngFor="let obj of names | filter : searchValue.name"
-                [value]="obj.name"
-                >{{ obj.name }}</mat-option
-              >
+              <input #multiUserSearch type="text" autocomplete="off" matInput placeholder="Поиск"
+                [(ngModel)]="searchValue.name" (keyup.enter)="onEnter($event)" />
+              <mat-option *ngFor="let obj of names | filter : searchValue.name" [value]="obj.name">{{ obj.name }}
+              </mat-option>
             </mat-select>
           </mat-form-field>
         </th>
@@ -44,38 +34,39 @@
             <mat-label>Служение</mat-label>
             <mat-select multiple [(ngModel)]="day.value">
               <div class="inp_wrap">
-                <input
-                  #multiUserSearch
-                  type="text"
-                  autocomplete="off"
-                  matInput
-                  placeholder="Поиск"
-                  [(ngModel)]="searchValue.d1"
-                />
+                <input #multiUserSearch type="text" autocomplete="off" matInput placeholder="Поиск"
+                  [(ngModel)]="searchValue.d1" />
               </div>
-              <mat-option
-                *ngFor="let option of options | filter : searchValue.d1"
-                [value]="option.name"
-                >{{ option.name }}</mat-option
-              >
+              <mat-option *ngFor="let option of options | filter : searchValue.d1" [value]="option.name">{{ option.name
+                }}</mat-option>
             </mat-select>
           </mat-form-field>
         </th>
       </tr>
     </thead>
-    <tbody>
-      <tr *ngFor="let item of items; let i = index">
-        <td>{{ i + 1 }}</td>
-        <td class="header_m sm bold">{{ item.name }}</td>
-        <td class="yellow">{{ item.d0?.join(", ") }}</td>
-        <td>{{ item.d1?.join(", ") }}</td>
-        <td>{{ item.d2?.join(", ") }}</td>
-        <td class="blue">{{ item.d3?.join(", ") }}</td>
-        <td>{{ item.d4?.join(", ") }}</td>
-        <td>{{ item.d5?.join(", ") }}</td>
-        <td>{{ item.d6?.join(", ") }}</td>
-        <td class="green">{{ item.d7?.join(", ") }}</td>
-      </tr>
+    <tbody [formGroup]="form">
+      <ng-container *ngIf="usersMonah?.length">
+        <ng-container *ngTemplateOutlet="tableItems; context: {userItems: usersMonah, array: 'usersMonah'}">
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="usersPoslushnik?.length">
+        <ng-container *ngTemplateOutlet="tableItems; context: {userItems: usersPoslushnik, array: 'usersPoslushnik'}">
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="usersKandidat?.length">
+        <ng-container *ngTemplateOutlet="tableItems; context: {userItems: usersKandidat, array: 'usersKandidat'}">
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="usersKandidat?.length">
+        <ng-container *ngTemplateOutlet="tableItems; context: {userItems: usersBrahmashari, array: 'usersBrahmashari'}">
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="usersMiranin?.length">
+        <ng-container *ngTemplateOutlet="tableItems; context: {userItems: usersMiranin, array: 'usersMiranin'}">
+        </ng-container>
+      </ng-container>
+
+
     </tbody>
   </table>
   <div class="b_wrap">
@@ -84,3 +75,125 @@
     <button mat-raised-button (click)="exel()">exel</button>
   </div>
 </div>
+
+<ng-template #tableItems let-items="userItems" let-array="array">
+  <ng-container [formGroup]="form">
+    <ng-container [formArrayName]="array">
+      <tr *ngFor="let item of items; let i = index">
+        <ng-container>
+          <td>{{ i + 1 }}</td>
+          <td class="header_m sm bold">{{ item.name }}</td>
+          <td class="yellow" [formGroupName]="i">
+            <mat-form-field appearance="fill">
+              <mat-label>Служение</mat-label>
+              <mat-select multiple formControlName="d0">
+                <div class="inp_wrap">
+                  <!-- <input #multiUserSearch type="text" autocomplete="off" matInput placeholder="Поиск"
+                  [(ngModel)]="searchValue.d1" /> -->
+                </div>
+                <mat-option *ngFor="let option of options | filter : searchValue.d1" [value]="option.name">{{
+                  option.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </td>
+          <td [formGroupName]="i">
+            <mat-form-field appearance="fill">
+              <mat-label>Служение</mat-label>
+              <mat-select multiple formControlName="d1">
+                <div class="inp_wrap">
+                  <!-- <input #multiUserSearch type="text" autocomplete="off" matInput placeholder="Поиск"
+                  [(ngModel)]="searchValue.d1" /> -->
+                </div>
+                <mat-option *ngFor="let option of options | filter : searchValue.d1" [value]="option.name">{{
+                  option.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </td>
+          <td [formGroupName]="i">
+            <mat-form-field appearance="fill">
+              <mat-label>Служение</mat-label>
+              <mat-select multiple formControlName="d2">
+                <div class="inp_wrap">
+                  <!-- <input #multiUserSearch type="text" autocomplete="off" matInput placeholder="Поиск"
+                  [(ngModel)]="searchValue.d1" /> -->
+                </div>
+                <mat-option *ngFor="let option of options | filter : searchValue.d1" [value]="option.name">{{
+                  option.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </td>
+          <td class="blue" [formGroupName]="i">
+            <mat-form-field appearance="fill">
+              <mat-label>Служение</mat-label>
+              <mat-select multiple formControlName="d3">
+                <div class="inp_wrap">
+                  <!-- <input #multiUserSearch type="text" autocomplete="off" matInput placeholder="Поиск"
+                  [(ngModel)]="searchValue.d1" /> -->
+                </div>
+                <mat-option *ngFor="let option of options | filter : searchValue.d1" [value]="option.name">{{
+                  option.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </td>
+          <td [formGroupName]="i">
+            <mat-form-field appearance="fill">
+              <mat-label>Служение</mat-label>
+              <mat-select multiple formControlName="d4">
+                <div class="inp_wrap">
+                  <!-- <input #multiUserSearch type="text" autocomplete="off" matInput placeholder="Поиск"
+                  [(ngModel)]="searchValue.d1" /> -->
+                </div>
+                <mat-option *ngFor="let option of options | filter : searchValue.d1" [value]="option.name">{{
+                  option.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </td>
+          <td [formGroupName]="i">
+            <mat-form-field appearance="fill">
+              <mat-label>Служение</mat-label>
+              <mat-select multiple formControlName="d5">
+                <div class="inp_wrap">
+                  <!-- <input #multiUserSearch type="text" autocomplete="off" matInput placeholder="Поиск"
+                  [(ngModel)]="searchValue.d1" /> -->
+                </div>
+                <mat-option *ngFor="let option of options | filter : searchValue.d1" [value]="option.name">{{
+                  option.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </td>
+          <td [formGroupName]="i">
+            <mat-form-field appearance="fill">
+              <mat-label>Служение</mat-label>
+              <mat-select multiple formControlName="d6">
+                <div class="inp_wrap">
+                  <!-- <input #multiUserSearch type="text" autocomplete="off" matInput placeholder="Поиск"
+                  [(ngModel)]="searchValue.d1" /> -->
+                </div>
+                <mat-option *ngFor="let option of options | filter : searchValue.d1" [value]="option.name">{{
+                  option.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </td>
+          <td class="green" [formGroupName]="i">
+            <mat-form-field appearance="fill">
+              <mat-label>Служение</mat-label>
+              <mat-select multiple formControlName="d7">
+                <div class="inp_wrap">
+                  <!-- <input #multiUserSearch type="text" autocomplete="off" matInput placeholder="Поиск"
+                  [(ngModel)]="searchValue.d1" /> -->
+                </div>
+                <mat-option *ngFor="let option of options | filter : searchValue.d1" [value]="option.name">{{
+                  option.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </td>
+        </ng-container>
+
+      </tr>
+      <tr class="min-heigth">
+        <td class="min-heigth"></td>
+      </tr>
+    </ng-container>
+  </ng-container>
+
+</ng-template>

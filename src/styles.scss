@@ -1,5 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @import url("https://fonts.googleapis.com/css2?family=Merriweather&display=swap");
+
 html,
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
@@ -8,6 +9,7 @@ body {
   color: #333;
   margin: 0;
 }
+
 h1,
 h2,
 h3,
@@ -17,55 +19,70 @@ h6,
 p {
   margin: 0 !important;
 }
+
 button {
   border: none;
 }
+
 p {
   margin: 0;
 }
+
 body::-webkit-scrollbar {
   width: 5px;
 }
+
 body::-webkit-scrollbar-button {
   background-color: #dbdac2;
   height: 0;
 }
+
 body::-webkit-scrollbar-track {
   background-color: #fff;
 }
+
 body::-webkit-scrollbar-thumb {
   height: 56px;
   background-color: rgba(54, 51, 51, 0.2);
   border-radius: 5px;
 }
+
 button:focus {
   outline: transparent;
 }
+
 button:hover {
   cursor: pointer;
 }
+
 input:focus {
   outline: transparent;
 }
+
 p:focus {
   outline: transparent;
 }
+
 div:focus {
   outline: transparent;
 }
+
 textarea:focus {
   outline: transparent;
 }
+
 ul {
   margin: 0;
   word-break: break-all;
 }
+
 .mat-menu-panel {
   padding: 22px;
   position: relative;
   width: 320px;
   background: #282828;
 }
+
 .player_wrap {
   align-items: center;
   display: flex;
@@ -74,6 +91,7 @@ ul {
   justify-content: space-between;
   padding: 0 16px;
 }
+
 .player_out_wrap {
   position: fixed;
   bottom: 0;
@@ -86,35 +104,42 @@ ul {
   min-width: 620px;
   user-select: none;
 }
+
 .audio {
   position: relative;
   background: #1a1529;
   height: 100vh;
 }
+
 .curr_colour {
   fill: hsl(0deg 0% 72.94%);
   transition: all 0.3s;
 }
+
 .nav_butt:hover {
   .curr_colour {
     fill: #fff;
     transition: all 0.3s;
   }
 }
+
 .side_wrap {
   display: flex;
   width: 25%;
   overflow: hidden;
+
   &.end {
     justify-content: flex-end;
   }
 }
+
 .gen {
   display: flex;
   align-items: center;
   margin: 0 10px;
   background-color: transparent;
 }
+
 .play_paus {
   display: flex;
   align-items: center;
@@ -124,21 +149,25 @@ ul {
   width: 32px;
   height: 32px;
   transition: all 0.3s;
+
   &:hover {
     transition: all 0.3s;
     transform: scale(1.06);
   }
 }
+
 .wish_list {
   display: flex;
   cursor: pointer;
   padding: 0 10px;
 }
+
 .main_buttons {
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
 .play {
   cursor: pointer;
   position: relative;
@@ -147,10 +176,12 @@ ul {
   width: 0;
   border: 7px solid #0000;
   border-left: 13px solid white;
+
   &:hover {
     transform: scale(1.1);
   }
 }
+
 .timeline {
   background: #5e5e5e;
   position: relative;
@@ -160,6 +191,7 @@ ul {
   height: 4px;
   transition: 0.3s;
   margin: 10px 0;
+
   .progress {
     position: relative;
     border-radius: 2px;
@@ -167,6 +199,7 @@ ul {
     width: 0%;
     height: 100%;
     transition: 0.3s;
+
     p {
       display: none;
       position: absolute;
@@ -179,41 +212,51 @@ ul {
     }
   }
 }
+
 .timeline-wrap:hover {
   transition: 0.3s;
+
   .progress {
     background: #1db954;
     transition: 0.3s;
+
     p {
       display: block;
       transition: 0.3s;
     }
   }
 }
+
 .line_wrapper {
   display: flex;
   align-items: center;
   padding: 4px 0 0 0;
 }
+
 .gn {
   font-size: 0.6875rem;
   font-weight: 400;
   color: #87a79a;
+
   &.white {
     color: #fff;
+
     &:hover {
       text-decoration: underline;
     }
   }
 }
+
 .time {
   text-align: center;
   min-width: 40px;
 }
+
 .volume-container {
   display: flex;
   align-items: center;
   justify-content: center;
+
   .volume-slider {
     background: #5e5e5e;
     position: relative;
@@ -223,6 +266,7 @@ ul {
     height: 3px;
     transition: 0.3s;
     margin: 10px 0 10px 10px;
+
     .volume-percentage {
       position: relative;
       border-radius: 2px;
@@ -230,6 +274,7 @@ ul {
       width: 50%;
       height: 100%;
       transition: 0.3s;
+
       p {
         display: none;
         position: absolute;
@@ -243,10 +288,12 @@ ul {
       }
     }
   }
+
   &:hover {
     .volume-percentage {
       background: #1db954;
       transition: 0.3s;
+
       p {
         display: block;
         transition: 0.3s;
@@ -254,115 +301,148 @@ ul {
     }
   }
 }
+
 .header_m {
   font-family: "Merriweather", sans-serif;
+
   &.medium {
     font-size: 18px;
   }
+
   &.sm {
     font-size: 14px;
   }
+
   &.bold {
     font-weight: 600;
   }
+
   &.center {
     margin: 15px auto !important;
     text-align: center;
   }
 }
+
 table {
   border: 2px solid rgb(31, 31, 31);
   border-collapse: collapse;
+
   th,
   td {
     border: 2px solid black;
     padding: 3px;
   }
+
   th.grey-bord {
     border-right: 2px solid rgb(192, 189, 189);
     border-bottom: 2px solid rgb(192, 189, 189);
   }
+
   th.grey-border {
     border-right: 2px solid rgb(192, 189, 189);
   }
+
   th.grey-bord:last-child {
     border-right: 2px solid rgb(31, 31, 31);
   }
+
   th.grey-border:last-child {
     border-right: 2px solid rgb(31, 31, 31);
   }
 }
-div.mat-form-field-wrapper {
-  padding: 0;
+
+.client-main-component {
+  div.mat-form-field-wrapper {
+    padding: 0;
+  }
+
+  .mat-form-field-appearance-fill .mat-form-field-flex {
+    padding: 0 !important;
+    background-color: transparent !important;
+  }
+
+  .mat-form-field-appearance-fill .mat-form-field-infix {
+    padding: 0 !important;
+  }
+
+  .mat-form-field-infix {
+    width: 135px !important;
+  }
+
+  .mat-form-field-underline {
+    display: none !important;
+  }
+
+  .mat-select-trigger {
+    font-family: "Merriweather", sans-serif;
+    font-size: 12px;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+  }
+
+  .mat-select-panel::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  .mat-select-panel::-webkit-scrollbar-button {
+    background-color: #dbdac2;
+    height: 0;
+  }
+
+  .mat-select-panel::-webkit-scrollbar-track {
+    background-color: #fff;
+  }
+
+  .mat-select-panel::-webkit-scrollbar-thumb {
+    height: 56px;
+    background-color: rgba(54, 51, 51, 0.2);
+    border-radius: 5px;
+  }
+
+  .mat-select.ng-dirty.ng-touched {
+    .mat-select-trigger {
+      display: inline-table !important;
+    }
+  }
+
+  input.mat-input-element {
+    height: 38px;
+    padding: 0 10px;
+    box-sizing: border-box;
+    background: aliceblue;
+  }
+  .mat-select-panel.mat-primary {
+    min-width: calc(100% + 30px) !important;
+  }
 }
-.mat-form-field-appearance-fill .mat-form-field-flex {
-  padding: 0 !important;
-  background-color: transparent !important;
-}
-.mat-form-field-appearance-fill .mat-form-field-infix {
-  padding: 0 !important;
-}
-.mat-form-field-infix {
-  width: 135px !important;
-}
-.mat-form-field-underline {
-  display: none !important;
-}
-.mat-select-trigger {
-  font-family: "Merriweather", sans-serif;
-  font-size: 12px;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-}
+
 td.blue {
   background-color: #9bc6ea;
 }
+
 td.yellow {
   background-color: #fce59a;
 }
+
 td.green {
   background-color: #b7e0cb;
 }
 
-.mat-select-panel::-webkit-scrollbar {
-  width: 5px;
-}
-.mat-select-panel::-webkit-scrollbar-button {
-  background-color: #dbdac2;
-  height: 0;
-}
-.mat-select-panel::-webkit-scrollbar-track {
-  background-color: #fff;
-}
-.mat-select-panel::-webkit-scrollbar-thumb {
-  height: 56px;
-  background-color: rgba(54, 51, 51, 0.2);
-  border-radius: 5px;
-}
-.mat-select.ng-dirty.ng-touched {
-  .mat-select-trigger {
-    display: inline-table !important;
-  }
-}
-input.mat-input-element {
-  height: 38px;
-  padding: 0 10px;
-  box-sizing: border-box;
-  background: aliceblue;
-}
+
 .inp_wrap {
   position: sticky;
   top: 0;
   background-color: black;
   z-index: 1;
 }
-.mat-select-panel.mat-primary {
-  min-width: calc(100% + 30px) !important;
-}
+
+
+
 button.b_gn {
   margin-right: 10px;
 }
+
 .b_wrap {
   display: flex;
   justify-content: center;

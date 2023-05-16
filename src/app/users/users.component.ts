@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -7,11 +7,13 @@ import { FirestoreService, User } from '../services/firestore.service';
 @Component({
   selector: 'app-users',
   templateUrl: './users.component.html',
-  styleUrls: ['./users.component.scss']
+  styleUrls: ['./users.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class UsersComponent implements OnInit, OnDestroy {
   users: User[] = [];
   unsubscribeAll$: Subject<any> = new Subject();
+  servicesList = [];
   statuses = [
     {name: 'Монах'},
     {name: 'Послушник'},
@@ -20,6 +22,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     {name: 'Мирянин'},
   ];
   userForm: FormGroup;
+  serviceForm: FormGroup;
   constructor(
     private firestore: FirestoreService,
     private fb: FormBuilder
@@ -27,15 +30,18 @@ export class UsersComponent implements OnInit, OnDestroy {
     this.userForm = fb.group({
       name: ['', Validators.required],
       status: ['', Validators.required]
+    });
+    this.serviceForm = fb.group({
+      name: ['', Validators.required],
     })
    }
 
 
   ngOnInit(): void {
-    this.userForm.valueChanges.subscribe(v => {
-      console.log(v);
+    // this.userForm.valueChanges.subscribe(v => {
+    //   console.log(v);
       
-    })
+    // })
 
 
     this.firestore.getUsers().pipe(takeUntil(this.unsubscribeAll$)).subscribe((users: User[]) => {
@@ -43,6 +49,11 @@ export class UsersComponent implements OnInit, OnDestroy {
       
       this.users = users;
     });
+   
+    this.firestore.getServices().pipe(takeUntil(this.unsubscribeAll$)).subscribe((services) => {
+      console.log(services);
+      this.servicesList = services;
+    }); 
   };
   
   ngOnDestroy(): void {
@@ -52,17 +63,49 @@ export class UsersComponent implements OnInit, OnDestroy {
 
   createUser() {
     const form = this.userForm.value;
-    const user = new User('new', form.name, form.status, true);
-    this.firestore.addUser(user);
+    const user = {
+      name: form.name,
+      role: form.status,
+      checked: true
+    };
+    this.users.push(user as any);
+    console.log(user, this.users);
+    
+    this.firestore.addUser(this.users);
     this.userForm.reset();
   };
 
-  deleteUser(user) {
-    this.firestore.deleteUser(user);
+  deleteUser(user, index) {
+    this.users.splice(index, 1)
+    this.firestore.deleteUser(this.users);
   };
+
+  deleteService(service, i) {
+    this.servicesList.splice(i, 1);
+    this.firestore.updateServices(this.servicesList);
+  }
+
+  addService() {
+    const form = this.serviceForm.value;
+    this.servicesList.push({name: form.name});
+    this.firestore.updateServices(this.servicesList);
+    this.serviceForm.reset();
+  }
 
   changeActivity(user) {
     user.checked = !user.checked;
-    this.firestore.updateUser(user);
+    this.firestore.updateUser(this.users);
+  }
+
+  upUser(user, index) {
+    this.users.splice(index,1);
+    this.users.splice(index-1, 0, user);
+    this.firestore.updateUser(this.users);
+  }
+
+  downUser(user, index) {
+    this.users.splice(index,1);
+    this.users.splice(index+1, 0, user);
+    this.firestore.updateUser(this.users);
   }
 }

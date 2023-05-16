@@ -17,9 +17,10 @@
 
 .table-container {
     // justify-content: center;
-    flex: 0 1 50%;
+    // flex: 0 1 50%;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    // justify-content: center;
     max-height: 600px;
     overflow: auto;
 }
@@ -74,4 +75,22 @@ table {
 }
 .add-button {
     padding: 5px 20px;
+}
+.flex-col {
+    flex-direction: column;
+}
+.right-els {
+    display: flex;
+    flex-direction: column;
+    margin-right: 70px;
+}
+.left-els {
+    display: flex;
+    flex-direction: row; 
+}
+.mt {
+    margin-top: 50px;
+}
+.ml {
+    margin-left: 20px;
 }

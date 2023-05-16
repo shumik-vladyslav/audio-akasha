@@ -1,63 +1,119 @@
 <div class="wrapper">
-    <h1 class="main-header">Список пользователей</h1>
-    <div class="content">
-        <div class="add-user-container">
-            <h2>Добавить пользователя</h2>
-            <div class="flex items" [formGroup]="userForm">
-                <div class="flex item-container">
-                    <p class="item-info">Имя</p>
-                    <!-- <input type="text"> -->
-                    <mat-form-field class="example-full-width">
-                        <mat-label>Имя</mat-label>
-                        <input matInput placeholder="" value="" formControlName="name">
-                    </mat-form-field>
-                </div>
-                <div class="flex item-container">
-                    <p class="item-info">Статус</p>
-                    <mat-form-field appearance="fill">
-                        <mat-label> выберите статус</mat-label>
-                        <mat-select formControlName="status">
 
-                            <mat-option *ngFor="let obj of statuses " [value]="obj.name">{{obj.name}}</mat-option>
-                        </mat-select>
-                    </mat-form-field>
+    <div class="content">
+        <div class="right-els">
+            <div class="add-user-container">
+                <h2>Добавить пользователя</h2>
+                <div class="flex items" [formGroup]="userForm">
+                    <div class="flex item-container">
+                        <p class="item-info">Имя</p>
+                        <!-- <input type="text"> -->
+                        <mat-form-field class="example-full-width">
+                            <mat-label>Имя</mat-label>
+                            <input matInput placeholder="" value="" formControlName="name">
+                        </mat-form-field>
+                    </div>
+                    <div class="flex item-container">
+                        <p class="item-info">Статус</p>
+                        <mat-form-field appearance="fill">
+                            <mat-label> выберите статус</mat-label>
+                            <mat-select formControlName="status">
+
+                                <mat-option *ngFor="let obj of statuses " [value]="obj.name">{{obj.name}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
                 </div>
+                <button mat-raised-button color="primary" class="add-button" [disabled]="!userForm.valid"
+                    (click)="createUser()">Добавиь пользователя</button>
             </div>
-            <button mat-raised-button color="primary" class="add-button" [disabled]="!userForm.valid"
-                (click)="createUser()">Добавиь пользователя</button>
+            <div class="add-user-container mt">
+                <h2>Добавить cлужение</h2>
+                <div class="flex items" [formGroup]="serviceForm">
+                    <div class="flex item-container">
+                        <p class="item-info">Служение</p>
+                        <!-- <input type="text"> -->
+                        <mat-form-field class="example-full-width">
+                            <mat-label></mat-label>
+                            <input matInput placeholder="" value="" formControlName="name">
+                        </mat-form-field>
+                    </div>
+
+                </div>
+                <button mat-raised-button color="primary" class="add-button" [disabled]="!serviceForm.valid"
+                    (click)="addService()">Добавиь служение</button>
+            </div>
         </div>
-        <div class="table-container">
-            <table>
-                <thead style=" position: sticky; top: 0; background: #ffffff;">
-                    <tr>
-                        <th>Имя</th>
-                        <th>Статус</th>
-                        <th>Активный</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let user of users; let i = index">
-                        <td>
-                            <p>
-                                {{user.name}}
-                            </p>
-                        </td>
-                        <td>
-                            <p>{{user.role}}</p>
-                        </td>
-                        <td>
-                            <div class="flex center">
-                              <mat-checkbox class="example-margin" [checked]="user?.checked" (change)="changeActivity(user)"></mat-checkbox>  
-                            </div>
-                            
-                        </td>
-                        <td>
-                            <button mat-raised-button color="warn" class="add-button"
-                                (click)="deleteUser(user)">Удалить</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="left-els">
+            <div class="table-container">
+                <h1 class="main-header">Список пользователей</h1>
+                <table>
+                    <thead style=" position: sticky; top: 0; background: #ffffff; z-index: 18">
+                        <tr>
+                            <th>Имя</th>
+                            <th>Статус</th>
+                            <th>Активный</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let user of users; let i = index">
+                            <td>
+                                <p>
+                                    {{user.name}}
+                                </p>
+                            </td>
+                            <td>
+                                <p>{{user.role}}</p>
+                            </td>
+                            <td>
+                                <div class="flex center">
+                                    <mat-checkbox class="example-margin" [checked]="user?.checked"
+                                        (change)="changeActivity(user)"></mat-checkbox>
+                                </div>
+
+                            </td>
+                            <td>
+                                <div class="flex flex-col">
+                                    <button mat-raised-button color="warn" class="add-button"
+                                        (click)="deleteUser(user, i)">Удалить</button>
+                                    <button mat-raised-button color="primaty" class="add-button"
+                                        (click)="upUser(user, i)" [disabled]="i === 0">вверх</button>
+                                    <button mat-raised-button color="primaty" class="add-button"
+                                        (click)="downUser(user, i)" [disabled]="i === users?.length -1">вниз</button>
+                                </div>
+
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="table-container ml">
+                <h1 class="main-header">Список служения</h1>
+                <table>
+                    <thead style=" position: sticky; top: 0; background: #ffffff; z-index: 18">
+                        <tr>
+                            <th>Имя</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let service of servicesList; let i = index">
+                            <td>
+                                <p>
+                                    {{service.name}}
+                                </p>
+                            </td>
+
+                            <td>
+                                <div class="flex flex-col">
+                                    <button mat-raised-button color="warn" class="add-button"
+                                        (click)="deleteService(service, i)">Удалить</button>
+                                </div>
+
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
     </div>
