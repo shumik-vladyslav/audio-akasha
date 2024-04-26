@@ -16,6 +16,8 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { DialogEditDialog } from './dialog-edit/dialog-edit.component';
 import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule, NativeDateAdapter, DateAdapter, MAT_DATE_FORMATS} from '@angular/material/core';
 import { ClientComponent } from './client/client.component';
 import { AdminComponent } from './admin/admin.component';
 import { AudioPlayerComponent } from './audio-player/audio-player.component';
@@ -26,6 +28,7 @@ import { AngularFireModule } from "@angular/fire";
 import { AngularFireAnalyticsModule } from "@angular/fire/analytics";
 import { AngularFirestoreModule } from "@angular/fire/firestore";
 import { UsersComponent } from './users/users.component';
+import { ServiceDialogComponent } from './service-dialog/service-dialog.component';
 export const firebaseConfig = {
   apiKey: "AIzaSyAS1JBSZnqIXE_XWUALKnCowDY2coJEeNE",
   authDomain: "audio-akasha.firebaseapp.com",
@@ -42,7 +45,8 @@ export const firebaseConfig = {
     ClientComponent,
     AudioPlayerComponent,
     DialogEditDialog,
-    UsersComponent
+    UsersComponent,
+    ServiceDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -61,6 +65,8 @@ export const firebaseConfig = {
     MatDialogModule,
     MatSelectModule,
     MatCheckboxModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
     ReactiveFormsModule,
     AngularFireAnalyticsModule,
     AngularFirestoreModule,

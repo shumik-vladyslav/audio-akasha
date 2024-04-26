@@ -1,14 +1,62 @@
-import { ChangeDetectorRef, Component } from "@angular/core";
+import { AfterViewInit, ChangeDetectorRef, Component, Injectable, OnInit } from "@angular/core";
 import { FormArray, FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { FirestoreService } from "../services/firestore.service";
+import { DateAdapter } from '@angular/material/core';
+import {
+  MatDateRangeSelectionStrategy,
+  DateRange,
+  MAT_DATE_RANGE_SELECTION_STRATEGY,
+} from '@angular/material/datepicker';
+import { MatDialog } from "@angular/material/dialog";
+import { ServiceDialogComponent } from "../service-dialog/service-dialog.component";
+import { UsersComponent } from "../users/users.component";
+import { take } from "rxjs/operators";
+
+@Injectable()
+export class FiveDayRangeSelectionStrategy<D>
+  implements MatDateRangeSelectionStrategy<D> {
+  constructor(private _dateAdapter: DateAdapter<D>) { }
+
+  selectionFinished(date: D | null): DateRange<D> {
+    return this._createFiveDayRange(date);
+  }
+
+  createPreview(activeDate: D | null): DateRange<D> {
+    return this._createFiveDayRange(activeDate);
+  }
+
+  private _createFiveDayRange(date: D | null): DateRange<D> {
+    if (date) {
+      const start = this._dateAdapter.addCalendarDays(date, -0);
+      const end = this._dateAdapter.addCalendarDays(date, 6);
+      return new DateRange<D>(start, end);
+    }
+
+    return new DateRange<D>(null, null);
+  }
+}
 
 @Component({
   selector: 'client',
   templateUrl: './client.component.html',
-  styleUrls: ['./client.component.scss']
+  styleUrls: ['./client.component.scss'],
+  providers: [
+    {
+      provide: MAT_DATE_RANGE_SELECTION_STRATEGY,
+      useClass: FiveDayRangeSelectionStrategy,
+    },
+  ],
 })
-export class ClientComponent {
-  daysOfWeek: string[] = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
+export class ClientComponent implements OnInit, AfterViewInit {
+  daysOfWeek: DayOfWeek[] = [
+    { name: DayCodes.monday, label: 'Понедельник' },
+    { name: DayCodes.tuesday, label: 'Вторник' },
+    { name: DayCodes.wednesday, label: 'Среда' },
+    { name: DayCodes.thursday, label: 'Четверг' },
+    { name: DayCodes.friday, label: 'Пятница' },
+    { name: DayCodes.saturday, label: 'Суббота' },
+    { name: DayCodes.sunday, label: 'Воскресенье' }
+  ];
   dates: string[] = ['17', '18', '19', '20', '21', '22', '23'];
   names = [{ name: 'Аравиндини' }, { name: 'Санаткумар' }, { name: 'Экантини' }, { name: 'Ведапракаш' }, { name: 'Омкар' }];
   options = [];
@@ -17,7 +65,7 @@ export class ClientComponent {
   name = "";
   items = [];
   validate;
-  datesRange: string = "17.04-23.04";
+  datesRange: string = "";
   users = [];
   includudUsers = [];
 
@@ -28,20 +76,34 @@ export class ClientComponent {
   usersKandidat = [];
   usersBrahmashari = [];
   usersMiranin = [];
+  requiredServicesLost = [];
+  requiredDaysLost = [];
+  isUsedAllRequired = false;
 
   constructor(
     private firestore: FirestoreService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    public dialog: MatDialog,
+    private cdr: ChangeDetectorRef
   ) {
     firestore.getUsers().subscribe(users => {
+      if (!users) {
+        return;
+      };
       this.users = users;
       console.log(this.users);
       this.checkUsers();
     });
     firestore.getServices().subscribe(options => {
+      if (!options) {
+        return;
+      };
       this.options = options;
-      console.log(this.options);
+      this.requiredServicesLost = options?.filter(option => option?.isRequired === true);
+      console.log('this.options', this.options);
+      console.log('this.requiredServices', this.requiredServicesLost);
     });
+
     this.form = fb.group({
       usersMonah: fb.array([]),
       usersPoslushnik: fb.array([]),
@@ -49,11 +111,95 @@ export class ClientComponent {
       usersBrahmashari: fb.array([]),
       usersMiranin: fb.array([]),
       data: fb.array([]),
+      weekControlGroup: this.fb.group({
+        fromTime: this.fb.control(''),
+        toTime: this.fb.control('')
+      })
+    });
+    this.form.get('usersMonah').valueChanges.subscribe(value => {
+      console.log('valueChanges',this.form.get('usersMonah'));
+      // this.validateUserGroups();
+    });
+    this.form.get('usersPoslushnik').valueChanges.subscribe(value => {
+      // this.validateUserGroups();
+    });
+    this.form.get('usersKandidat').valueChanges.subscribe(value => {
+      // this.validateUserGroups();
+    });
+    this.form.get('usersBrahmashari').valueChanges.subscribe(value => {
+      // this.validateUserGroups();
+    });
+    this.form.get('usersMiranin').valueChanges.subscribe(value => {
+      // this.validateUserGroups();
+    });
+    this.form.get('weekControlGroup').valueChanges.subscribe((value: dateRange) => {
+      console.log('his.weekControl.valueChanges', value);
+      if (value?.fromTime && value?.toTime) {
+        this.datesRange = `${value?.fromTime.toLocaleDateString()} - ${value?.toTime.toLocaleDateString()}`;
+
+        this.getDates(value?.fromTime, value?.toTime);
+      }
     })
-    // this.form = fb.array([{
-    //   d1: this.fb.control('')
-    // }]);
   }
+
+  ngOnInit(): void {
+
+  }
+
+  ngAfterViewInit(): void {
+    this.firestore.getSelectedUserData().pipe(take(1)).subscribe((selectedUserData: SelectedUserData) => {
+      console.log('selectedUserData', selectedUserData);
+      if (selectedUserData) {
+        console.log('this.usersMonahArray',this.usersMonahArray);
+        // setTimeout(() => {
+          selectedUserData.weekControlGroup.fromTime = new Date(selectedUserData.weekControlGroup.fromTime.seconds * 1000);
+          selectedUserData.weekControlGroup.toTime = new Date(selectedUserData.weekControlGroup.toTime.seconds * 1000);
+          this.form.get('weekControlGroup').patchValue(selectedUserData.weekControlGroup);
+
+          selectedUserData.usersMonah.forEach((userMonah) => {
+            console.log('userMonah',userMonah);
+            for (const key in userMonah) {
+              // if (Object.prototype.hasOwnProperty.call(userMonah, key)) {
+                const element = userMonah[key];
+                console.log('for',element, key);
+                console.log('CONSOLE!',this.options);
+                let selectedData = this.options?.find(option => option.name == element[0]);
+                console.log('selectedData',selectedData);
+                // if(selectedData) {
+                //   this.usersMonahArray.controls[0].get('d1').patchValue([this.options[0].name]);
+                //   console.log('this.usersMonahArray!',this.usersMonahArray);
+                // };
+                
+              // }
+            }
+          });
+
+          // selectedUserData.usersMonah
+            // this.form.get('usersMonah').patchValue(selectedUserData.usersMonah);
+        // }, 10000);
+
+      }
+    });
+    setTimeout(() => {
+      this.usersMonahArray.controls[0].get('d1').patchValue([this.options[0].name]);
+      console.log('CONSOLE!',this.usersMonahArray.controls[0].get('d1').value);
+      this.usersMonahArray.controls[0].get('d1').value
+      this.cdr.detectChanges();
+    }, 5000);
+  }
+  getDates(startDate: Date, endDate: Date) {
+    let dateArray = new Array();
+    let currentDate = new Date(startDate);
+    this.dates = [];
+    while (currentDate <= endDate) {
+      this.dates.push(currentDate.getDate().toString());
+      dateArray.push(new Date(currentDate));
+      currentDate.setDate(currentDate.getDate() + 1);
+    };
+    console.log('dateArray', dateArray);
+    return dateArray;
+  }
+
   get usersMonahArray() {
     return this.form.get('usersMonah') as FormArray;
   }
@@ -81,34 +227,6 @@ export class ClientComponent {
     this.name = e.target.value;
   }
 
-  add() {
-    this.items.push({
-      name: this.name,
-      d0: this.days[0].value,
-      d1: this.days[1].value,
-      d2: this.days[2].value,
-      d3: this.days[3].value,
-      d4: this.days[4].value,
-      d5: this.days[5].value,
-      d6: this.days[6].value,
-      d7: this.days[7].value,
-    });
-  }
-
-  addSpace() {
-    this.items.push({
-      name: "",
-      d0: [],
-      d1: [],
-      d2: [],
-      d3: [],
-      d4: [],
-      d5: [],
-      d6: [],
-      d7: [],
-    });
-  }
-
   exel() {
     this.validate = true;
     this.exportToCSV();
@@ -117,61 +235,61 @@ export class ClientComponent {
   exportToCSV() {
     let csvContent = '';
     csvContent += '№, Имя, Отв. на неделе,'
-    this.daysOfWeek.forEach((day: string) => {
-      csvContent += day + ",";
+    this.daysOfWeek.forEach((day: DayOfWeek) => {
+      csvContent += day.label + ",";
     });
     csvContent += '\n';
-    if(this.usersMonahArray.value?.length) {
+    if (this.usersMonahArray.value?.length) {
       this.usersMonahArray.value.forEach((user, index) => {
-        csvContent += index +1 + ',';
+        csvContent += index + 1 + ',';
         csvContent += user.name + ',';
         csvContent = this.buildCsvDays(csvContent, user);
-        
+
         csvContent += '\n';
       });
       csvContent += '\n';
     };
-    if(this.usersPoslushnikArray.value?.length) {
+    if (this.usersPoslushnikArray.value?.length) {
       this.usersPoslushnikArray.value.forEach((user, index) => {
-        csvContent += index +1 + ',';
+        csvContent += index + 1 + ',';
         csvContent += user.name + ',';
         csvContent = this.buildCsvDays(csvContent, user);
-        
+
         csvContent += '\n';
       });
       csvContent += '\n';
     };
-    if(this.usersKandidatArray.value?.length) {
+    if (this.usersKandidatArray.value?.length) {
       this.usersKandidatArray.value.forEach((user, index) => {
-        csvContent += index +1 + ',';
+        csvContent += index + 1 + ',';
         csvContent += user.name + ',';
         csvContent = this.buildCsvDays(csvContent, user);
-        
+
         csvContent += '\n';
       });
       csvContent += '\n';
     };
-    if(this.usersBrahmashariArray.value?.length) {
+    if (this.usersBrahmashariArray.value?.length) {
       this.usersBrahmashariArray.value.forEach((user, index) => {
-        csvContent += index +1 + ',';
+        csvContent += index + 1 + ',';
         csvContent += user.name + ',';
         csvContent = this.buildCsvDays(csvContent, user);
-        
+
         csvContent += '\n';
       });
       csvContent += '\n';
     };
-    if(this.usersMiraninArray.value?.length) {
+    if (this.usersMiraninArray.value?.length) {
       this.usersMiraninArray.value.forEach((user, index) => {
-        csvContent += index +1 + ',';
+        csvContent += index + 1 + ',';
         csvContent += user.name + ',';
         csvContent = this.buildCsvDays(csvContent, user);
-        
+
         csvContent += '\n';
       });
       csvContent += '\n';
     };
-    
+
     this.writeContents(csvContent, 'CSV_File.csv', '');
   }
 
@@ -234,16 +352,6 @@ export class ClientComponent {
       if (user.checked) {
         this.includudUsers.push(user);
         this.sortUsers(user);
-        // this.data.push(this.fb.group({
-        //   d0: this.fb.control(''),
-        //   d1: this.fb.control(''),
-        //   d2: this.fb.control(''),
-        //   d3: this.fb.control(''),
-        //   d4: this.fb.control(''),
-        //   d5: this.fb.control(''),
-        //   d6: this.fb.control(''),
-        //   d7: this.fb.control(''),
-        // }))
       }
     })
     console.log(this.data);
@@ -331,4 +439,204 @@ export class ClientComponent {
     this.usersBrahmashari = [];
     this.usersMiranin = [];
   }
+
+  validateUserGroups() {
+    this.isUsedAllRequired = true;
+    this.requiredDaysLost = [];
+    this.requiredServicesLost.forEach((requiredService: { name: string, isRequired: boolean }) => {
+      const validateUserGroup = (usersArray: FormArray, dayCode: DayCodes, setError: boolean) => {
+        usersArray.controls.forEach((control: FormGroup) => {
+          control.controls[dayCode].setErrors(setError ? { notUsedService: true } : null);
+        });
+      }
+
+      let isRequiredUsedInMonday: boolean = false;
+      let isRequiredUsedInTuesday: boolean = false;
+      let isRequiredUsedInWednesday: boolean = false;
+      let isRequiredUsedInThursday: boolean = false;
+      let isRequiredUsedInFriday: boolean = false;
+      let isRequiredUsedInSaturday: boolean = false;
+      let isRequiredUsedInSunday: boolean = false;
+      console.log('requiredService', requiredService);
+      this.daysOfWeek.forEach((day: DayOfWeek) => {
+        if (
+          this.getAllUsers().some((userFormArray: FormArray) => (userFormArray.value as Array<any>)?.some(
+            itemServices => itemServices[day.name]?.some(itemService => itemService == requiredService.name)
+          ))) {
+
+          switch (day.name) {
+            case DayCodes.monday:
+              this.getAllUsers().forEach((userFormArray: FormArray) => {
+                validateUserGroup(userFormArray, day.name, false);
+              });
+              isRequiredUsedInMonday = true;
+              break;
+            case DayCodes.tuesday:
+              this.getAllUsers().forEach((userFormArray: FormArray) => {
+                validateUserGroup(userFormArray, day.name, false);
+              });
+              isRequiredUsedInTuesday = true;
+              break;
+            case DayCodes.wednesday:
+              this.getAllUsers().forEach((userFormArray: FormArray) => {
+                validateUserGroup(userFormArray, day.name, false);
+              });
+              isRequiredUsedInWednesday = true;
+              break;
+            case DayCodes.thursday:
+              this.getAllUsers().forEach((userFormArray: FormArray) => {
+                validateUserGroup(userFormArray, day.name, false);
+              });
+              isRequiredUsedInThursday = true;
+              break;
+            case DayCodes.friday:
+              this.getAllUsers().forEach((userFormArray: FormArray) => {
+                validateUserGroup(userFormArray, day.name, false);
+              });
+              isRequiredUsedInFriday = true;
+              break;
+            case DayCodes.saturday:
+              this.getAllUsers().forEach((userFormArray: FormArray) => {
+                validateUserGroup(userFormArray, day.name, false);
+              });
+              isRequiredUsedInSaturday = true;
+              break;
+            case DayCodes.sunday:
+              this.getAllUsers().forEach((userFormArray: FormArray) => {
+                validateUserGroup(userFormArray, day.name, false);
+              });
+              isRequiredUsedInSunday = true;
+              break;
+
+            default:
+              break;
+          };
+          console.log('isRequiredUsedInMonday', isRequiredUsedInMonday, isRequiredUsedInTuesday, isRequiredUsedInWednesday, isRequiredUsedInThursday, isRequiredUsedInFriday, isRequiredUsedInSaturday, isRequiredUsedInSunday);
+
+        } else {
+          this.getAllUsers().forEach((userFormArray: FormArray) => {
+            validateUserGroup(userFormArray, day.name, true);
+          });
+          if (!this.requiredDaysLost.some(lostDay => lostDay.name == day.name)) {
+            this.requiredDaysLost.push(day);
+          };
+          // switch (day.name) {
+          //   case DayCodes.monday:
+          //     // validateUserGroups()
+          //     break;
+          //   case DayCodes.tuesday:
+          //     // isRequiredUsedInTuesday = true;
+          //     break;
+          //   case DayCodes.wednesday:
+          //     // isRequiredUsedInWednesday = true;
+          //   break;
+          //   case DayCodes.thursday:
+          //     // isRequiredUsedInThursday = true;
+          //   break;
+          //   case DayCodes.friday:
+          //     // isRequiredUsedInFriday = true;
+          //   break;
+          //   case DayCodes.saturday:
+          //     // isRequiredUsedInSaturday = true;
+          //   break;
+          //   case DayCodes.sunday:
+          //     // isRequiredUsedInSunday = true;
+          //   break;
+
+          //   default:
+          //     break;
+          // };
+        };
+      })
+
+      console.log('this.usersPoslushnikArray.errors', this.usersPoslushnikArray.errors);
+      if (!isRequiredUsedInMonday || !isRequiredUsedInTuesday || !isRequiredUsedInWednesday || !isRequiredUsedInThursday || !isRequiredUsedInFriday || !isRequiredUsedInSaturday || !isRequiredUsedInSunday) {
+        this.isUsedAllRequired = false;
+      };
+    });
+    console.log('THIS FORM', this.form);
+  }
+
+  getAllUsers(): Array<FormArray> {
+    return new Array(
+      this.usersMonahArray,
+      this.usersPoslushnikArray,
+      this.usersKandidatArray,
+      this.usersBrahmashariArray,
+      this.usersMiraninArray
+    );
+
+  }
+
+  openDialog(): void {
+    this.dialog.open(ServiceDialogComponent, {
+      width: '990px'
+    });
+  }
+  openUsersDialog(): void {
+    this.dialog.open(UsersComponent, {
+      width: '1000px'
+    });
+  }
+
+  uploadToFirestore() {
+    console.log('uploadToFirestore! this.form.value', this.form.value);
+    // this.form.value
+    this.firestore.updateSelectedUserData(this.form.value);
+  }
+  isOptionSelected(valueArray: string[], value): boolean {
+    // console.log('isOptionSelected!',valueArray, value);
+    if(!valueArray?.length) {
+      return false;
+    };
+    return valueArray?.some(item => item == value);
+  }
+  toggleOption(option: string, formArray: FormArray, userIndex: number, dayCode: DayCodes,) {
+    console.log('toggleOption!',option, formArray, userIndex, dayCode);
+    const selectedOptionIndex = formArray.controls[userIndex].get(dayCode).value?.findIndex(itm => itm == option);
+
+    selectedOptionIndex > -1 ? formArray.controls[userIndex].get(dayCode).setValue( formArray.controls[userIndex].get(dayCode).value.splice(selectedOptionIndex, 1) ) : formArray.controls[userIndex].get(dayCode).setValue([option, ...formArray.controls[userIndex].get(dayCode).value] )
+  }
+
+}
+export class DateRangePickerSelectionStrategyExample { }
+export interface dateRange {
+  fromTime: Date,
+  toTime: Date
+}
+export interface DayOfWeek {
+  name: DayCodes,
+  label: string
+}
+export enum DayCodes {
+  monday = 'd1',
+  tuesday = 'd2',
+  wednesday = 'd3',
+  thursday = 'd4',
+  friday = 'd5',
+  saturday = 'd6',
+  sunday = 'd7',
+}
+export interface SelectedUserData {
+  data: [],
+  usersBrahmashari: UserData[],
+  usersKandidat: UserData[],
+  usersMiranin: UserData[],
+  usersMonah: UserData[],
+  usersPoslushnik: UserData[],
+  weekControlGroup: {
+    fromTime: any,
+    toTime: any
+  }
+}
+export interface UserData {
+  d0: string[],
+  d1: string[],
+  d2: string[],
+  d3: string[],
+  d4: string[],
+  d5: string[],
+  d6: string[],
+  d7: string[],
+  name: string
 }

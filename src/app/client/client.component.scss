@@ -1,3 +1,42 @@
-.min-heigth {
-    height: 28px ;
+:host::ng-deep {
+    .min-heigth {
+        height: 28px;
+    }
+
+    table {
+        border: 2px solid rgb(31, 31, 31);
+        border-collapse: collapse;
+
+        th,
+        td {
+            border: 2px solid black;
+            padding: 3px;
+        }
+
+        th.grey-bord {
+            border-right: 2px solid rgb(192, 189, 189);
+            border-bottom: 2px solid rgb(192, 189, 189);
+        }
+
+        th.grey-border {
+            border-right: 2px solid rgb(192, 189, 189);
+        }
+
+        th.grey-bord:last-child {
+            border-right: 2px solid rgb(31, 31, 31);
+        }
+
+        th.grey-border:last-child {
+            border-right: 2px solid rgb(31, 31, 31);
+        }
+    }
+    .week-picker {
+        width: 375px;
+    }
+    mat-form-field.ng-invalid {   
+        background-color: #fb6a6a3b!important;
+    }
+    option.selected {
+        background-color: #52ff2f54;
+    }
 }

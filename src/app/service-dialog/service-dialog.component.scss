@@ -1,5 +1,5 @@
 
-app-users {
+// app-service-dialog {
     .min-heigth {
         height: 28px;
     }
@@ -135,4 +135,11 @@ app-users {
     .ml {
         margin-left: 20px;
     }
-}
+    .td-item {
+        padding: 5px 10px;
+    }
+    .table-container {
+        overflow: auto;
+        max-height: 600px;
+    }
+// }

@@ -1,5 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
 @import url("https://fonts.googleapis.com/css2?family=Merriweather&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 html,
 body {
@@ -323,33 +326,7 @@ ul {
   }
 }
 
-table {
-  border: 2px solid rgb(31, 31, 31);
-  border-collapse: collapse;
 
-  th,
-  td {
-    border: 2px solid black;
-    padding: 3px;
-  }
-
-  th.grey-bord {
-    border-right: 2px solid rgb(192, 189, 189);
-    border-bottom: 2px solid rgb(192, 189, 189);
-  }
-
-  th.grey-border {
-    border-right: 2px solid rgb(192, 189, 189);
-  }
-
-  th.grey-bord:last-child {
-    border-right: 2px solid rgb(31, 31, 31);
-  }
-
-  th.grey-border:last-child {
-    border-right: 2px solid rgb(31, 31, 31);
-  }
-}
 
 .client-main-component {
   div.mat-form-field-wrapper {
@@ -448,4 +425,10 @@ button.b_gn {
   justify-content: center;
   width: 100%;
   margin: 20px auto;
+}
+.add-button {
+  .mat-button-wrapper {
+    display: flex;
+    justify-content: center;
+  }  
 }

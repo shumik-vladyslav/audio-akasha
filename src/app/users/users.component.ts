@@ -33,25 +33,25 @@ export class UsersComponent implements OnInit, OnDestroy {
     });
     this.serviceForm = fb.group({
       name: ['', Validators.required],
+      isRequired: false
     })
    }
 
 
   ngOnInit(): void {
-    // this.userForm.valueChanges.subscribe(v => {
-    //   console.log(v);
-      
-    // })
-
-
     this.firestore.getUsers().pipe(takeUntil(this.unsubscribeAll$)).subscribe((users: User[]) => {
       console.log(users);
-      
+      if (!users) {
+        return;
+      };
       this.users = users;
     });
    
     this.firestore.getServices().pipe(takeUntil(this.unsubscribeAll$)).subscribe((services) => {
       console.log(services);
+      if (!services) {
+        return;
+      };
       this.servicesList = services;
     }); 
   };
@@ -87,7 +87,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 
   addService() {
     const form = this.serviceForm.value;
-    this.servicesList.push({name: form.name});
+    this.servicesList.push({name: form.name, isRequired: form.isRequired});
     this.firestore.updateServices(this.servicesList);
     this.serviceForm.reset();
   }

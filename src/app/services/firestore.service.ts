@@ -23,7 +23,7 @@ export class FirestoreService {
         }
 
       });
-      data =  data.payload.doc.data() as any;
+      data =  data?.payload?.doc?.data() as any;
 
       
       return data?.users
@@ -47,6 +47,26 @@ export class FirestoreService {
       return data?.services
     }))
   };
+  getSelectedUserData(): Observable<any> {
+    return this.angularFirestore.collection('users').snapshotChanges().pipe(map((actions: any) => {
+      let data = actions.find(a => {
+        const data = a.payload.doc.data() as any;
+        const id = a.payload.doc.id;
+        if(data?.selectedUserData) {
+          return  data.selectedUserData;
+          
+        }
+
+      });
+      data =  data?.payload?.doc?.data() as any;
+
+      
+      return data?.selectedUserData;
+    }))
+  };
+  updateSelectedUserData(selectedUserData) {
+    this.angularFirestore.collection('users').doc('selectedUserData').update({selectedUserData});
+  }
   updateServices(services) {
     this.angularFirestore.collection('users').doc('servicesData').update({services});
   }

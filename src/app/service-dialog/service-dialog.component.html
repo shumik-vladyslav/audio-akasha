@@ -1,0 +1,68 @@
+<div class="wrapper">
+    <div class="content">
+        <div class="right-els mt-8">
+            <div class="add-user-container mt">
+                <h2>Добавить cлужение</h2>
+                <div class="flex items items-center" [formGroup]="serviceForm">
+                    <div class="flex item-container">
+                        <!-- <p class="item-info">Служение</p> -->
+                        <!-- <input type="text"> -->
+                        <mat-form-field class="example-full-width" style="width: 200px;">
+                            <mat-label>Введите название служения</mat-label>
+                            <input matInput placeholder="" value="" formControlName="name">
+                        </mat-form-field>
+                    </div>
+                    <div class="flex item-container">
+                        <!-- <p class="item-info">Служение</p> -->
+
+                        <mat-checkbox class="example-margin" [labelPosition]="'before'" formControlName="isRequired">
+                            Обязатольное служение
+                        </mat-checkbox>
+                    </div>
+
+                </div>
+                <button mat-raised-button color="primary" class="add-button" [disabled]="!serviceForm.valid"
+                    (click)="addService()">Добавиь служение</button>
+            </div>
+        </div>
+        <div class="left-els">
+            <h1 class="main-header">Список служения</h1>
+            <div class="table-container ml">
+
+                <table>
+                    <thead style=" position: sticky; top: 0; background: #ffffff; z-index: 18">
+                        <tr>
+                            <th>№</th>
+                            <th>Имя</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let service of servicesList; let i = index">
+                            <td>{{i+1}}</td>
+                            <td class="td-item">
+                                <p>
+                                    {{service.name}}
+                                </p>
+                            </td>
+                            <td class="td-item">
+                                <mat-checkbox class="example-margin" [labelPosition]="'before'" [(ngModel)]="service.isRequired" [disabled]="true">
+                                    Обязатольное служение
+                                </mat-checkbox>
+                            </td>
+
+                            <td class="td-item">
+                                <div class="flex flex-col">
+                                    <button mat-raised-button color="warn" class="add-button"
+                                        (click)="deleteService(service, i)">Удалить</button>
+                                </div>
+
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+    </div>
+</div>

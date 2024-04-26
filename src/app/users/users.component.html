@@ -1,6 +1,6 @@
 <div class="wrapper">
 
-    <div class="content">
+    <div class="content mt-8">
         <div class="right-els">
             <div class="add-user-container">
                 <h2>Добавить пользователя</h2>
@@ -25,31 +25,17 @@
                     </div>
                 </div>
                 <button mat-raised-button color="primary" class="add-button" [disabled]="!userForm.valid"
-                    (click)="createUser()">Добавиь пользователя</button>
+                    (click)="createUser()">Добавить пользователя</button>
             </div>
-            <div class="add-user-container mt">
-                <h2>Добавить cлужение</h2>
-                <div class="flex items" [formGroup]="serviceForm">
-                    <div class="flex item-container">
-                        <p class="item-info">Служение</p>
-                        <!-- <input type="text"> -->
-                        <mat-form-field class="example-full-width">
-                            <mat-label></mat-label>
-                            <input matInput placeholder="" value="" formControlName="name">
-                        </mat-form-field>
-                    </div>
 
-                </div>
-                <button mat-raised-button color="primary" class="add-button" [disabled]="!serviceForm.valid"
-                    (click)="addService()">Добавиь служение</button>
-            </div>
         </div>
         <div class="left-els">
+            <h1 class="main-header">Список пользователей</h1>
             <div class="table-container">
-                <h1 class="main-header">Список пользователей</h1>
                 <table>
                     <thead style=" position: sticky; top: 0; background: #ffffff; z-index: 18">
                         <tr>
+                            <th>№</th>
                             <th>Имя</th>
                             <th>Статус</th>
                             <th>Активный</th>
@@ -57,6 +43,7 @@
                     </thead>
                     <tbody>
                         <tr *ngFor="let user of users; let i = index">
+                            <td>{{i +1}}</td>
                             <td>
                                 <p>
                                     {{user.name}}
@@ -77,9 +64,15 @@
                                     <button mat-raised-button color="warn" class="add-button"
                                         (click)="deleteUser(user, i)">Удалить</button>
                                     <button mat-raised-button color="primaty" class="add-button"
-                                        (click)="upUser(user, i)" [disabled]="i === 0">вверх</button>
+                                        (click)="upUser(user, i)" [disabled]="i === 0">
+                                        <img style="height: 30px; width:30px"
+                                            src="https://img.icons8.com/?size=512&id=26192&format=png" alt="up">
+                                    </button>
                                     <button mat-raised-button color="primaty" class="add-button"
-                                        (click)="downUser(user, i)" [disabled]="i === users?.length -1">вниз</button>
+                                        (click)="downUser(user, i)" [disabled]="i === users?.length -1">
+                                        <img style="height: 30px; width:30px;transform: rotate(0.5turn);"
+                                            src="https://img.icons8.com/?size=512&id=26192&format=png" alt="up">
+                                    </button>
                                 </div>
 
                             </td>
@@ -87,33 +80,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="table-container ml">
-                <h1 class="main-header">Список служения</h1>
-                <table>
-                    <thead style=" position: sticky; top: 0; background: #ffffff; z-index: 18">
-                        <tr>
-                            <th>Имя</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let service of servicesList; let i = index">
-                            <td>
-                                <p>
-                                    {{service.name}}
-                                </p>
-                            </td>
 
-                            <td>
-                                <div class="flex flex-col">
-                                    <button mat-raised-button color="warn" class="add-button"
-                                        (click)="deleteService(service, i)">Удалить</button>
-                                </div>
-
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
         </div>
 
     </div>
