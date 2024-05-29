@@ -65,7 +65,13 @@ export class FirestoreService {
     }))
   };
   updateSelectedUserData(selectedUserData) {
-    this.angularFirestore.collection('users').doc('selectedUserData').update({selectedUserData});
+    // this.angularFirestore.collection('users').doc('selectedUserData').update({});
+    this.angularFirestore.collection('users').doc('selectedUserData').delete().then(() => {
+      this.angularFirestore.collection('users').doc('selectedUserData').set({selectedUserData});
+    })
+    // setTimeout(() => {
+    //   
+    // }, 2000);
   }
   updateServices(services) {
     this.angularFirestore.collection('users').doc('servicesData').update({services});

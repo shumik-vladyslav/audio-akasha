@@ -1,5 +1,5 @@
 import { AfterViewInit, ChangeDetectorRef, Component, Injectable, OnInit } from "@angular/core";
-import { FormArray, FormBuilder, FormControl, FormGroup } from "@angular/forms";
+import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { FirestoreService } from "../services/firestore.service";
 import { DateAdapter } from '@angular/material/core';
 import {
@@ -11,6 +11,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { ServiceDialogComponent } from "../service-dialog/service-dialog.component";
 import { UsersComponent } from "../users/users.component";
 import { take } from "rxjs/operators";
+import { utils, writeFileXLSX } from 'xlsx';
 
 @Injectable()
 export class FiveDayRangeSelectionStrategy<D>
@@ -86,12 +87,12 @@ export class ClientComponent implements OnInit, AfterViewInit {
     public dialog: MatDialog,
     private cdr: ChangeDetectorRef
   ) {
+    
     firestore.getUsers().subscribe(users => {
       if (!users) {
         return;
       };
       this.users = users;
-      console.log(this.users);
       this.checkUsers();
     });
     firestore.getServices().subscribe(options => {
@@ -100,8 +101,6 @@ export class ClientComponent implements OnInit, AfterViewInit {
       };
       this.options = options;
       this.requiredServicesLost = options?.filter(option => option?.isRequired === true);
-      console.log('this.options', this.options);
-      console.log('this.requiredServices', this.requiredServicesLost);
     });
 
     this.form = fb.group({
@@ -117,23 +116,21 @@ export class ClientComponent implements OnInit, AfterViewInit {
       })
     });
     this.form.get('usersMonah').valueChanges.subscribe(value => {
-      console.log('valueChanges',this.form.get('usersMonah'));
-      // this.validateUserGroups();
+      this.validateUserGroups();
     });
     this.form.get('usersPoslushnik').valueChanges.subscribe(value => {
-      // this.validateUserGroups();
+      this.validateUserGroups();
     });
     this.form.get('usersKandidat').valueChanges.subscribe(value => {
-      // this.validateUserGroups();
+      this.validateUserGroups();
     });
     this.form.get('usersBrahmashari').valueChanges.subscribe(value => {
-      // this.validateUserGroups();
+      this.validateUserGroups();
     });
     this.form.get('usersMiranin').valueChanges.subscribe(value => {
-      // this.validateUserGroups();
+      this.validateUserGroups();
     });
     this.form.get('weekControlGroup').valueChanges.subscribe((value: dateRange) => {
-      console.log('his.weekControl.valueChanges', value);
       if (value?.fromTime && value?.toTime) {
         this.datesRange = `${value?.fromTime.toLocaleDateString()} - ${value?.toTime.toLocaleDateString()}`;
 
@@ -143,49 +140,39 @@ export class ClientComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-
   }
 
   ngAfterViewInit(): void {
     this.firestore.getSelectedUserData().pipe(take(1)).subscribe((selectedUserData: SelectedUserData) => {
-      console.log('selectedUserData', selectedUserData);
       if (selectedUserData) {
-        console.log('this.usersMonahArray',this.usersMonahArray);
-        // setTimeout(() => {
-          selectedUserData.weekControlGroup.fromTime = new Date(selectedUserData.weekControlGroup.fromTime.seconds * 1000);
-          selectedUserData.weekControlGroup.toTime = new Date(selectedUserData.weekControlGroup.toTime.seconds * 1000);
-          this.form.get('weekControlGroup').patchValue(selectedUserData.weekControlGroup);
-
-          selectedUserData.usersMonah.forEach((userMonah) => {
-            console.log('userMonah',userMonah);
-            for (const key in userMonah) {
-              // if (Object.prototype.hasOwnProperty.call(userMonah, key)) {
-                const element = userMonah[key];
-                console.log('for',element, key);
-                console.log('CONSOLE!',this.options);
-                let selectedData = this.options?.find(option => option.name == element[0]);
-                console.log('selectedData',selectedData);
-                // if(selectedData) {
-                //   this.usersMonahArray.controls[0].get('d1').patchValue([this.options[0].name]);
-                //   console.log('this.usersMonahArray!',this.usersMonahArray);
-                // };
-                
-              // }
-            }
-          });
-
-          // selectedUserData.usersMonah
-            // this.form.get('usersMonah').patchValue(selectedUserData.usersMonah);
-        // }, 10000);
-
+        selectedUserData.weekControlGroup.fromTime = new Date(selectedUserData.weekControlGroup.fromTime.seconds * 1000);
+        selectedUserData.weekControlGroup.toTime = new Date(selectedUserData.weekControlGroup.toTime.seconds * 1000);
+        this.form.get('weekControlGroup').patchValue(selectedUserData.weekControlGroup);
+        for (const selectedUserDataKey in selectedUserData) {
+          const usersArray = selectedUserData[selectedUserDataKey];
+          if(usersArray && Array.isArray(usersArray)) {
+            usersArray.forEach((userMonah, index) => {
+              const currentUserControl = this.getAllUsers()?.find(usersArray =>usersArray?.controls?.find(control => control.get('name')?.value == userMonah.name))?.controls.find(control => control?.get('name')?.value == userMonah.name);
+              for (const key in userMonah) {
+                if (key !== 'name') {
+                  let selectedServices = [];
+                  const dayServiceArray = userMonah[key];
+                  if (dayServiceArray && Array.isArray(dayServiceArray) && dayServiceArray?.length) {
+                    dayServiceArray?.forEach((service: string) => {
+                      let selectedService = this.options?.find(option => option.name == service);
+                      selectedServices.push(selectedService.name);
+                    });
+                  };
+                  if (selectedServices) {
+                    currentUserControl.get(key).patchValue(selectedServices);
+                  };
+                };
+              }
+            });
+          }
+        }
       }
     });
-    setTimeout(() => {
-      this.usersMonahArray.controls[0].get('d1').patchValue([this.options[0].name]);
-      console.log('CONSOLE!',this.usersMonahArray.controls[0].get('d1').value);
-      this.usersMonahArray.controls[0].get('d1').value
-      this.cdr.detectChanges();
-    }, 5000);
   }
   getDates(startDate: Date, endDate: Date) {
     let dateArray = new Array();
@@ -196,7 +183,6 @@ export class ClientComponent implements OnInit, AfterViewInit {
       dateArray.push(new Date(currentDate));
       currentDate.setDate(currentDate.getDate() + 1);
     };
-    console.log('dateArray', dateArray);
     return dateArray;
   }
 
@@ -221,7 +207,6 @@ export class ClientComponent implements OnInit, AfterViewInit {
   }
 
   onEnter(e) {
-    console.log(e.target.value);
     this.searchValue.name = "";
     this.names.push({ name: e.target.value })
     this.name = e.target.value;
@@ -229,7 +214,7 @@ export class ClientComponent implements OnInit, AfterViewInit {
 
   exel() {
     this.validate = true;
-    this.exportToCSV();
+    this.exportToXLSX();
   };
 
   exportToCSV() {
@@ -293,6 +278,42 @@ export class ClientComponent implements OnInit, AfterViewInit {
     this.writeContents(csvContent, 'CSV_File.csv', '');
   }
 
+  exportToXLSX () {
+    let data = [];
+    this.getAllUsers().forEach((usersArray: FormArray, index: number) => {
+      if(index !== 0 && usersArray?.controls?.length) {
+        data.push({})
+      };
+      let day1 = `Понедельник, ${this.dates[0]}`;
+      let day2 = `Вторник, ${this.dates[1]}`;
+      let day3 = `Среда, ${this.dates[2]}`;
+      let day4 = `Четверг, ${this.dates[3]}`;
+      let day5 = `Пятница, ${this.dates[4]}`;
+      let day6 = `Суббота, ${this.dates[5]}`;
+      let day7 = `Воскресенье, ${this.dates[6]}`;
+      usersArray.controls.forEach((userControl: AbstractControl, userIndex: number) => {
+        let obj = {
+          '№': userIndex + 1,
+          'Имя': userControl.get('name').value,
+          'Отв. на неделе': userControl.get('d0').value.toString().replace(/[\[\]]/g, ''),
+        };
+        obj[day1] = userControl.get('d1').value.toString().replace(/[\[\]]/g, ''),
+        obj[day2] = userControl.get('d2').value.toString().replace(/[\[\]]/g, ''),
+        obj[day3] = userControl.get('d3').value.toString().replace(/[\[\]]/g, ''),
+        obj[day4] = userControl.get('d4').value.toString().replace(/[\[\]]/g, ''),
+        obj[day5] = userControl.get('d5').value.toString().replace(/[\[\]]/g, ''),
+        obj[day6] = userControl.get('d6').value.toString().replace(/[\[\]]/g, ''),
+        obj[day7] = userControl.get('d7').value.toString().replace(/[\[\]]/g, ''),
+
+        data.push(obj);
+      })
+    });
+    const ws = utils.json_to_sheet(data);
+    const wb = utils.book_new();
+    utils.book_append_sheet(wb, ws, "Data");
+    writeFileXLSX(wb, "SheetJSAngularAoO.xlsx");
+  }
+
   buildCsvDays(csvContent, item) {
     if ((item.d0 as Array<string>)?.length) {
       csvContent += item.d1.join(' ') + ',';
@@ -354,8 +375,6 @@ export class ClientComponent implements OnInit, AfterViewInit {
         this.sortUsers(user);
       }
     })
-    console.log(this.data);
-
   }
   sortUsers(user) {
 
@@ -443,7 +462,8 @@ export class ClientComponent implements OnInit, AfterViewInit {
   validateUserGroups() {
     this.isUsedAllRequired = true;
     this.requiredDaysLost = [];
-    this.requiredServicesLost.forEach((requiredService: { name: string, isRequired: boolean }) => {
+    this.requiredServicesLost.every
+    // this.requiredServicesLost.forEach((requiredService: { name: string, isRequired: boolean }) => {
       const validateUserGroup = (usersArray: FormArray, dayCode: DayCodes, setError: boolean) => {
         usersArray.controls.forEach((control: FormGroup) => {
           control.controls[dayCode].setErrors(setError ? { notUsedService: true } : null);
@@ -457,12 +477,14 @@ export class ClientComponent implements OnInit, AfterViewInit {
       let isRequiredUsedInFriday: boolean = false;
       let isRequiredUsedInSaturday: boolean = false;
       let isRequiredUsedInSunday: boolean = false;
-      console.log('requiredService', requiredService);
+
       this.daysOfWeek.forEach((day: DayOfWeek) => {
         if (
-          this.getAllUsers().some((userFormArray: FormArray) => (userFormArray.value as Array<any>)?.some(
+          this.requiredServicesLost.every(requiredService => this.getAllUsers().some((userFormArray: FormArray) => (userFormArray.value as Array<any>)?.some(
             itemServices => itemServices[day.name]?.some(itemService => itemService == requiredService.name)
-          ))) {
+          )))
+          
+        ) {
 
           switch (day.name) {
             case DayCodes.monday:
@@ -511,7 +533,6 @@ export class ClientComponent implements OnInit, AfterViewInit {
             default:
               break;
           };
-          console.log('isRequiredUsedInMonday', isRequiredUsedInMonday, isRequiredUsedInTuesday, isRequiredUsedInWednesday, isRequiredUsedInThursday, isRequiredUsedInFriday, isRequiredUsedInSaturday, isRequiredUsedInSunday);
 
         } else {
           this.getAllUsers().forEach((userFormArray: FormArray) => {
@@ -549,12 +570,10 @@ export class ClientComponent implements OnInit, AfterViewInit {
         };
       })
 
-      console.log('this.usersPoslushnikArray.errors', this.usersPoslushnikArray.errors);
       if (!isRequiredUsedInMonday || !isRequiredUsedInTuesday || !isRequiredUsedInWednesday || !isRequiredUsedInThursday || !isRequiredUsedInFriday || !isRequiredUsedInSaturday || !isRequiredUsedInSunday) {
         this.isUsedAllRequired = false;
       };
-    });
-    console.log('THIS FORM', this.form);
+    // });
   }
 
   getAllUsers(): Array<FormArray> {
@@ -566,6 +585,16 @@ export class ClientComponent implements OnInit, AfterViewInit {
       this.usersMiraninArray
     );
 
+  }
+  
+  getAllUsersControls(): AbstractControl[] {
+    return [
+      ...this.usersMonahArray.controls,
+      ...this.usersPoslushnikArray.controls,
+      ...this.usersKandidatArray.controls,
+      ...this.usersBrahmashariArray.controls,
+      ...this.usersMiraninArray.controls
+    ];
   }
 
   openDialog(): void {
@@ -580,22 +609,19 @@ export class ClientComponent implements OnInit, AfterViewInit {
   }
 
   uploadToFirestore() {
-    console.log('uploadToFirestore! this.form.value', this.form.value);
     // this.form.value
     this.firestore.updateSelectedUserData(this.form.value);
   }
   isOptionSelected(valueArray: string[], value): boolean {
-    // console.log('isOptionSelected!',valueArray, value);
-    if(!valueArray?.length) {
+    if (!valueArray?.length) {
       return false;
     };
     return valueArray?.some(item => item == value);
   }
   toggleOption(option: string, formArray: FormArray, userIndex: number, dayCode: DayCodes,) {
-    console.log('toggleOption!',option, formArray, userIndex, dayCode);
     const selectedOptionIndex = formArray.controls[userIndex].get(dayCode).value?.findIndex(itm => itm == option);
 
-    selectedOptionIndex > -1 ? formArray.controls[userIndex].get(dayCode).setValue( formArray.controls[userIndex].get(dayCode).value.splice(selectedOptionIndex, 1) ) : formArray.controls[userIndex].get(dayCode).setValue([option, ...formArray.controls[userIndex].get(dayCode).value] )
+    selectedOptionIndex > -1 ? formArray.controls[userIndex].get(dayCode).setValue(formArray.controls[userIndex].get(dayCode).value.splice(selectedOptionIndex, 1)) : formArray.controls[userIndex].get(dayCode).setValue([option, ...formArray.controls[userIndex].get(dayCode).value])
   }
 
 }

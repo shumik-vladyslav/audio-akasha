@@ -136,7 +136,7 @@
             </mat-form-field>
           </td>
           <td [formGroupName]="i">
-            <select name="" id="">
+            <!-- <select name="" id="">
               <option value="" selected></option>
               <ng-container *ngFor="let option of options">
                 <option (click)="toggleOption(option, array, i, 'd1')" [ngClass]="{'selected' : isOptionSelected(usersMonahArray.controls[i].get('d1').value, option.name)}" [selected]="isOptionSelected(usersMonahArray.controls[i].get('d1').value, option.name)">
@@ -146,18 +146,18 @@
                 </option>
               </ng-container>
               
-            </select>
-            <!-- <mat-form-field appearance="fill">
+            </select> -->
+            <mat-form-field appearance="fill">
               <mat-label>Служение</mat-label>
-              <select matNativeControl>
+              <!-- <select matNativeControl>
                 <option value="" selected></option>
                 <option *ngFor="let option of options" [value]="option.name">{{option.name}}</option>
-              </select>
+              </select> -->
               <mat-select multiple formControlName="d1">
                 <mat-option *ngFor="let option of options" [value]="option.name">{{
                   option.name }}</mat-option>
               </mat-select>
-            </mat-form-field> -->
+            </mat-form-field>
           </td>
           <td [formGroupName]="i">
             <mat-form-field appearance="fill">
