@@ -12,6 +12,27 @@ import { ServiceDialogComponent } from "../service-dialog/service-dialog.compone
 import { UsersComponent } from "../users/users.component";
 import { take } from "rxjs/operators";
 import { utils, writeFileXLSX } from 'xlsx';
+import {
+  Document,
+  Packer,
+  Paragraph,
+  TextRun,
+  Media,
+  // PictureRun,
+  HorizontalPositionAlign,
+  HorizontalPositionRelativeFrom,
+  VerticalPositionRelativeFrom,
+  VerticalPositionAlign,
+  WidthType,
+  Header,
+  Footer,
+  Table,
+  TableRow,
+  TableCell,
+  HeightRule,
+  Styles
+} from "docx";
+import { saveAs } from "file-saver";
 
 @Injectable()
 export class FiveDayRangeSelectionStrategy<D>
@@ -87,7 +108,7 @@ export class ClientComponent implements OnInit, AfterViewInit {
     public dialog: MatDialog,
     private cdr: ChangeDetectorRef
   ) {
-    
+
     firestore.getUsers().subscribe(users => {
       if (!users) {
         return;
@@ -150,9 +171,9 @@ export class ClientComponent implements OnInit, AfterViewInit {
         this.form.get('weekControlGroup').patchValue(selectedUserData.weekControlGroup);
         for (const selectedUserDataKey in selectedUserData) {
           const usersArray = selectedUserData[selectedUserDataKey];
-          if(usersArray && Array.isArray(usersArray)) {
+          if (usersArray && Array.isArray(usersArray)) {
             usersArray.forEach((userMonah, index) => {
-              const currentUserControl = this.getAllUsers()?.find(usersArray =>usersArray?.controls?.find(control => control.get('name')?.value == userMonah.name))?.controls.find(control => control?.get('name')?.value == userMonah.name);
+              const currentUserControl = this.getAllUsers()?.find(usersArray => usersArray?.controls?.find(control => control.get('name')?.value == userMonah.name))?.controls.find(control => control?.get('name')?.value == userMonah.name);
               for (const key in userMonah) {
                 if (key !== 'name') {
                   let selectedServices = [];
@@ -278,10 +299,10 @@ export class ClientComponent implements OnInit, AfterViewInit {
     this.writeContents(csvContent, 'CSV_File.csv', '');
   }
 
-  exportToXLSX () {
+  exportToXLSX() {
     let data = [];
     this.getAllUsers().forEach((usersArray: FormArray, index: number) => {
-      if(index !== 0 && usersArray?.controls?.length) {
+      if (index !== 0 && usersArray?.controls?.length) {
         data.push({})
       };
       let day1 = `Понедельник, ${this.dates[0]}`;
@@ -298,14 +319,14 @@ export class ClientComponent implements OnInit, AfterViewInit {
           'Отв. на неделе': userControl.get('d0').value.toString().replace(/[\[\]]/g, ''),
         };
         obj[day1] = userControl.get('d1').value.toString().replace(/[\[\]]/g, ''),
-        obj[day2] = userControl.get('d2').value.toString().replace(/[\[\]]/g, ''),
-        obj[day3] = userControl.get('d3').value.toString().replace(/[\[\]]/g, ''),
-        obj[day4] = userControl.get('d4').value.toString().replace(/[\[\]]/g, ''),
-        obj[day5] = userControl.get('d5').value.toString().replace(/[\[\]]/g, ''),
-        obj[day6] = userControl.get('d6').value.toString().replace(/[\[\]]/g, ''),
-        obj[day7] = userControl.get('d7').value.toString().replace(/[\[\]]/g, ''),
+          obj[day2] = userControl.get('d2').value.toString().replace(/[\[\]]/g, ''),
+          obj[day3] = userControl.get('d3').value.toString().replace(/[\[\]]/g, ''),
+          obj[day4] = userControl.get('d4').value.toString().replace(/[\[\]]/g, ''),
+          obj[day5] = userControl.get('d5').value.toString().replace(/[\[\]]/g, ''),
+          obj[day6] = userControl.get('d6').value.toString().replace(/[\[\]]/g, ''),
+          obj[day7] = userControl.get('d7').value.toString().replace(/[\[\]]/g, ''),
 
-        data.push(obj);
+          data.push(obj);
       })
     });
     const ws = utils.json_to_sheet(data);
@@ -459,121 +480,123 @@ export class ClientComponent implements OnInit, AfterViewInit {
     this.usersMiranin = [];
   }
 
+  lostServices = {
+    'd1': [],
+    'd2': [],
+    'd3': [],
+    'd4': [],
+    'd5': [],
+    'd6': [],
+    'd7': [],
+  };
+
   validateUserGroups() {
     this.isUsedAllRequired = true;
     this.requiredDaysLost = [];
-    this.requiredServicesLost.every
-    // this.requiredServicesLost.forEach((requiredService: { name: string, isRequired: boolean }) => {
-      const validateUserGroup = (usersArray: FormArray, dayCode: DayCodes, setError: boolean) => {
-        usersArray.controls.forEach((control: FormGroup) => {
-          control.controls[dayCode].setErrors(setError ? { notUsedService: true } : null);
-        });
-      }
+    const validateUserGroup = (usersArray: FormArray, dayCode: DayCodes, setError: boolean) => {
+      usersArray.controls.forEach((control: FormGroup) => {
+        control.controls[dayCode].setErrors(setError ? { notUsedService: true } : null);
+      });
+    }
 
-      let isRequiredUsedInMonday: boolean = false;
-      let isRequiredUsedInTuesday: boolean = false;
-      let isRequiredUsedInWednesday: boolean = false;
-      let isRequiredUsedInThursday: boolean = false;
-      let isRequiredUsedInFriday: boolean = false;
-      let isRequiredUsedInSaturday: boolean = false;
-      let isRequiredUsedInSunday: boolean = false;
+    let isRequiredUsedInMonday: boolean = false;
+    let isRequiredUsedInTuesday: boolean = false;
+    let isRequiredUsedInWednesday: boolean = false;
+    let isRequiredUsedInThursday: boolean = false;
+    let isRequiredUsedInFriday: boolean = false;
+    let isRequiredUsedInSaturday: boolean = false;
+    let isRequiredUsedInSunday: boolean = false;
 
-      this.daysOfWeek.forEach((day: DayOfWeek) => {
-        if (
-          this.requiredServicesLost.every(requiredService => this.getAllUsers().some((userFormArray: FormArray) => (userFormArray.value as Array<any>)?.some(
-            itemServices => itemServices[day.name]?.some(itemService => itemService == requiredService.name)
-          )))
-          
-        ) {
+    this.lostServices = {
+      'd1': [],
+      'd2': [],
+      'd3': [],
+      'd4': [],
+      'd5': [],
+      'd6': [],
+      'd7': [],
+    };
 
-          switch (day.name) {
-            case DayCodes.monday:
-              this.getAllUsers().forEach((userFormArray: FormArray) => {
-                validateUserGroup(userFormArray, day.name, false);
-              });
-              isRequiredUsedInMonday = true;
-              break;
-            case DayCodes.tuesday:
-              this.getAllUsers().forEach((userFormArray: FormArray) => {
-                validateUserGroup(userFormArray, day.name, false);
-              });
-              isRequiredUsedInTuesday = true;
-              break;
-            case DayCodes.wednesday:
-              this.getAllUsers().forEach((userFormArray: FormArray) => {
-                validateUserGroup(userFormArray, day.name, false);
-              });
-              isRequiredUsedInWednesday = true;
-              break;
-            case DayCodes.thursday:
-              this.getAllUsers().forEach((userFormArray: FormArray) => {
-                validateUserGroup(userFormArray, day.name, false);
-              });
-              isRequiredUsedInThursday = true;
-              break;
-            case DayCodes.friday:
-              this.getAllUsers().forEach((userFormArray: FormArray) => {
-                validateUserGroup(userFormArray, day.name, false);
-              });
-              isRequiredUsedInFriday = true;
-              break;
-            case DayCodes.saturday:
-              this.getAllUsers().forEach((userFormArray: FormArray) => {
-                validateUserGroup(userFormArray, day.name, false);
-              });
-              isRequiredUsedInSaturday = true;
-              break;
-            case DayCodes.sunday:
-              this.getAllUsers().forEach((userFormArray: FormArray) => {
-                validateUserGroup(userFormArray, day.name, false);
-              });
-              isRequiredUsedInSunday = true;
-              break;
+    this.daysOfWeek.forEach((day: DayOfWeek) => {
+      if (
+        this.requiredServicesLost.every(requiredService => this.getAllUsers().some((userFormArray: FormArray) => (userFormArray.value as Array<any>)?.some(
+          itemServices => itemServices[day.name]?.some(itemService => itemService == requiredService.name)
+        )))
 
-            default:
-              break;
-          };
+      ) {
+        this.lostServices[day.name] = [];
+        switch (day.name) {
+          case DayCodes.monday:
+            this.getAllUsers().forEach((userFormArray: FormArray) => {
+              validateUserGroup(userFormArray, day.name, false);
+            });
+            isRequiredUsedInMonday = true;
 
-        } else {
-          this.getAllUsers().forEach((userFormArray: FormArray) => {
-            validateUserGroup(userFormArray, day.name, true);
-          });
-          if (!this.requiredDaysLost.some(lostDay => lostDay.name == day.name)) {
-            this.requiredDaysLost.push(day);
-          };
-          // switch (day.name) {
-          //   case DayCodes.monday:
-          //     // validateUserGroups()
-          //     break;
-          //   case DayCodes.tuesday:
-          //     // isRequiredUsedInTuesday = true;
-          //     break;
-          //   case DayCodes.wednesday:
-          //     // isRequiredUsedInWednesday = true;
-          //   break;
-          //   case DayCodes.thursday:
-          //     // isRequiredUsedInThursday = true;
-          //   break;
-          //   case DayCodes.friday:
-          //     // isRequiredUsedInFriday = true;
-          //   break;
-          //   case DayCodes.saturday:
-          //     // isRequiredUsedInSaturday = true;
-          //   break;
-          //   case DayCodes.sunday:
-          //     // isRequiredUsedInSunday = true;
-          //   break;
+            break;
+          case DayCodes.tuesday:
+            this.getAllUsers().forEach((userFormArray: FormArray) => {
+              validateUserGroup(userFormArray, day.name, false);
+            });
+            isRequiredUsedInTuesday = true;
+            break;
+          case DayCodes.wednesday:
+            this.getAllUsers().forEach((userFormArray: FormArray) => {
+              validateUserGroup(userFormArray, day.name, false);
+            });
+            isRequiredUsedInWednesday = true;
+            break;
+          case DayCodes.thursday:
+            this.getAllUsers().forEach((userFormArray: FormArray) => {
+              validateUserGroup(userFormArray, day.name, false);
+            });
+            isRequiredUsedInThursday = true;
+            break;
+          case DayCodes.friday:
+            this.getAllUsers().forEach((userFormArray: FormArray) => {
+              validateUserGroup(userFormArray, day.name, false);
+            });
+            isRequiredUsedInFriday = true;
+            break;
+          case DayCodes.saturday:
+            this.getAllUsers().forEach((userFormArray: FormArray) => {
+              validateUserGroup(userFormArray, day.name, false);
+            });
+            isRequiredUsedInSaturday = true;
+            break;
+          case DayCodes.sunday:
+            this.getAllUsers().forEach((userFormArray: FormArray) => {
+              validateUserGroup(userFormArray, day.name, false);
+            });
+            isRequiredUsedInSunday = true;
+            break;
 
-          //   default:
-          //     break;
-          // };
+          default:
+            break;
         };
-      })
 
-      if (!isRequiredUsedInMonday || !isRequiredUsedInTuesday || !isRequiredUsedInWednesday || !isRequiredUsedInThursday || !isRequiredUsedInFriday || !isRequiredUsedInSaturday || !isRequiredUsedInSunday) {
-        this.isUsedAllRequired = false;
+      } else {
+        this.lostServices[day.name] = [...this.requiredServicesLost];
+
+        this.requiredServicesLost.forEach(requiredService => this.getAllUsers().forEach((userFormArray: FormArray) => (userFormArray.value as Array<any>)?.forEach((itemServices) => {
+
+          const existIndex = this.lostServices[day.name].findIndex(service => itemServices[day.name].some(serv => service.name == serv));
+          if (existIndex > -1) {
+            this.lostServices[day.name].splice(existIndex, 1)
+          };
+        }
+        )));
+        this.getAllUsers().forEach((userFormArray: FormArray) => {
+          validateUserGroup(userFormArray, day.name, true);
+        });
+        if (!this.requiredDaysLost.some(lostDay => lostDay.name == day.name)) {
+          this.requiredDaysLost.push(day);
+        };
       };
-    // });
+    })
+
+    if (!isRequiredUsedInMonday || !isRequiredUsedInTuesday || !isRequiredUsedInWednesday || !isRequiredUsedInThursday || !isRequiredUsedInFriday || !isRequiredUsedInSaturday || !isRequiredUsedInSunday) {
+      this.isUsedAllRequired = false;
+    };
   }
 
   getAllUsers(): Array<FormArray> {
@@ -586,7 +609,7 @@ export class ClientComponent implements OnInit, AfterViewInit {
     );
 
   }
-  
+
   getAllUsersControls(): AbstractControl[] {
     return [
       ...this.usersMonahArray.controls,
@@ -622,6 +645,59 @@ export class ClientComponent implements OnInit, AfterViewInit {
     const selectedOptionIndex = formArray.controls[userIndex].get(dayCode).value?.findIndex(itm => itm == option);
 
     selectedOptionIndex > -1 ? formArray.controls[userIndex].get(dayCode).setValue(formArray.controls[userIndex].get(dayCode).value.splice(selectedOptionIndex, 1)) : formArray.controls[userIndex].get(dayCode).setValue([option, ...formArray.controls[userIndex].get(dayCode).value])
+  }
+
+  saveInDocFormat() {
+    const doc = new Document({sections:[{
+      headers: {
+        default: new Header({
+          children: [new Paragraph({ text: "Header", style: "para" })]
+        })
+      },
+      footers: {
+        default: new Footer({
+          children: [new Paragraph({ text: "Footer", style: "para" })]
+        })
+      },
+      children: [
+        new Table({
+          width: { size: 100, type: WidthType.PERCENTAGE },
+          rows: [
+            new TableRow({
+              children: [
+                new TableCell({
+                  children: [
+                    new Paragraph({ text: "Hello world", style: "para" })
+                  ]
+                }),
+                // new TableCell({
+                //   children: [new Paragraph(image)]
+                // })
+              ],
+              // height: { height: 2000, rule: HeightRule.EXACT }
+            }),
+            new TableRow({
+              children: [
+                new TableCell({
+                  children: [
+                    new Paragraph({ text: "Hello world", style: "para" })
+                  ]
+                }),
+                new TableCell({
+                  children: [new Paragraph("hello")]
+                })
+              ]
+            })
+          ]
+        })
+      ]
+    }]});
+    // doc.Styles.createParagraphStyle("para", "Para").font("Calibri");
+    Packer.toBlob(doc).then(blob => {
+      console.log(blob);
+      saveAs(blob, "example.docx");
+      console.log("Document created successfully");
+    });
   }
 
 }

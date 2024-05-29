@@ -78,41 +78,42 @@
           </ng-container>
         </ng-container>
         <ng-container *ngIf="usersKandidat?.length">
-          <ng-container *ngTemplateOutlet="tableItems; context: {userItems: usersBrahmashari, array: 'usersBrahmashari'}">
+          <ng-container
+            *ngTemplateOutlet="tableItems; context: {userItems: usersBrahmashari, array: 'usersBrahmashari'}">
           </ng-container>
         </ng-container>
         <ng-container *ngIf="usersMiranin?.length">
           <ng-container *ngTemplateOutlet="tableItems; context: {userItems: usersMiranin, array: 'usersMiranin'}">
           </ng-container>
         </ng-container>
-  
-  
+
+
       </tbody>
     </table>
   </div>
   <div class="b_wrap">
-    <!-- <button class="b_gn" mat-raised-button (click)="add()">Add</button>
-    <button class="b_gn" mat-raised-button (click)="addSpace()">addSpace</button> -->
     <button mat-raised-button (click)="exel()">Импорт в Excel</button>
   </div>
   <div class="flex flex-col">
     <h2 class="mr-2 text-center">
-      Список обязательного служения
+      Обязательное служение:
     </h2>
     <div class="flex flex-row justify-center">
-      <div *ngFor="let requiredService of requiredServicesLost; let i = index;" class="mr-2 text-base"> {{i+1}}. {{requiredService.name}};
+      <div *ngFor="let requiredService of requiredServicesLost; let i = index;" class="mr-2 text-base"> {{i+1}}.
+        {{requiredService.name}};
       </div>
     </div>
-    <h2 class="mr-2 text-center" *ngIf="!isUsedAllRequired">
-      Пропущенные дни:
+    <h2 class="mr-2 text-center">
+      Пропущенное служение:
     </h2>
-    <!-- <h2 class="mr-2 text-center text-red-600" *ngIf="!isUsedAllRequired">
-      Внимание! Не все обязательное служение было расставлено! Обратите внимание.
-    </h2> -->
-    <div class="flex flex-row justify-center" *ngIf="!isUsedAllRequired">
-      <!-- <div class="inline-flex mr-2" >Пропущенные дни:</div> -->
-      <div *ngFor="let requiredDay of requiredDaysLost; let i = index;" class="mr-2 text-base">
-         {{requiredDay.label}} {{ i == requiredDay?.length -1 ? '.' : ','}}
+    <div class="flex flex-col">
+      <div *ngFor="let requiredDay of requiredDaysLost; let i = index;"
+        class="mr-2 text-lg flex justify-center items-center">
+        <div class="mr-1">{{requiredDay.label}} :</div>
+        <div class="mr-2 text-base" *ngFor="let lost of lostServices[requiredDay.name]"> {{lost.name}} ,</div>
+      </div>
+      <div *ngIf="!requiredDaysLost?.length" class="text-lg flex justify-center items-center" (click)="saveInDocFormat()">
+        Все служение распределено!
       </div>
     </div>
   </div>
@@ -162,7 +163,8 @@
           <td [formGroupName]="i">
             <mat-form-field appearance="fill">
               <mat-label>Служение</mat-label>
-              <mat-select multiple formControlName="d2" [ngClass]="{'notValid': form?.controls?.usersPoslushnikArray?.controls[i]?.controls?.d2?.errors}">
+              <mat-select multiple formControlName="d2"
+                [ngClass]="{'notValid': form?.controls?.usersPoslushnikArray?.controls[i]?.controls?.d2?.errors}">
                 <div class="inp_wrap">
                   <!-- <input #multiUserSearch type="text" autocomplete="off" matInput placeholder="Поиск"
                   [(ngModel)]="searchValue.d1" /> -->
@@ -229,8 +231,6 @@
               <mat-label>Служение</mat-label>
               <mat-select multiple formControlName="d7">
                 <div class="inp_wrap">
-                  <!-- <input #multiUserSearch type="text" autocomplete="off" matInput placeholder="Поиск"
-                  [(ngModel)]="searchValue.d1" /> -->
                 </div>
                 <mat-option *ngFor="let option of options" [value]="option.name">{{
                   option.name }}</mat-option>
