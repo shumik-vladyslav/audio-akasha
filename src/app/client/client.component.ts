@@ -332,7 +332,7 @@ export class ClientComponent implements OnInit, AfterViewInit {
     const ws = utils.json_to_sheet(data);
     const wb = utils.book_new();
     utils.book_append_sheet(wb, ws, "Data");
-    writeFileXLSX(wb, "SheetJSAngularAoO.xlsx");
+    writeFileXLSX(wb, "table.xlsx");
   }
 
   buildCsvDays(csvContent, item) {
@@ -648,54 +648,122 @@ export class ClientComponent implements OnInit, AfterViewInit {
   }
 
   saveInDocFormat() {
-    const doc = new Document({sections:[{
-      headers: {
-        default: new Header({
-          children: [new Paragraph({ text: "Header", style: "para" })]
-        })
-      },
-      footers: {
-        default: new Footer({
-          children: [new Paragraph({ text: "Footer", style: "para" })]
-        })
-      },
-      children: [
-        new Table({
-          width: { size: 100, type: WidthType.PERCENTAGE },
-          rows: [
-            new TableRow({
+    const usersSections = [];
+    this.getAllUsers().forEach(userArr => {
+      console.log('userArr', userArr);
+      userArr.value.forEach(userData => {
+        const tableItem = new TableRow({
+          children: [
+            new TableCell({
               children: [
-                new TableCell({
-                  children: [
-                    new Paragraph({ text: "Hello world", style: "para" })
-                  ]
-                }),
-                // new TableCell({
-                //   children: [new Paragraph(image)]
-                // })
-              ],
-              // height: { height: 2000, rule: HeightRule.EXACT }
-            }),
-            new TableRow({
-              children: [
-                new TableCell({
-                  children: [
-                    new Paragraph({ text: "Hello world", style: "para" })
-                  ]
-                }),
-                new TableCell({
-                  children: [new Paragraph("hello")]
-                })
+                new Paragraph(userData.name),
               ]
-            })
+            }),
+            new TableCell({
+              children: [
+                new Paragraph(userData.d0.toString()),
+              ]
+            }),
+            new TableCell({
+              children: [
+                new Paragraph(userData.d1.toString()),
+              ]
+            }),
+            new TableCell({
+              children: [
+                new Paragraph(userData.d2.toString()),
+              ]
+            }),
+            new TableCell({
+              children: [
+                new Paragraph(userData.d3.toString()),
+              ]
+            }),
+            new TableCell({
+              children: [
+                new Paragraph(userData.d4.toString()),
+              ]
+            }),
+            new TableCell({
+              children: [
+                new Paragraph(userData.d5.toString()),
+              ]
+            }),
+            new TableCell({
+              children: [
+                new Paragraph(userData.d6.toString()),
+              ]
+            }),
+            new TableCell({
+              children: [
+                new Paragraph(userData.d7.toString()),
+              ]
+            }),
           ]
         })
-      ]
-    }]});
+        usersSections.push(tableItem);
+      })
+    })
+    const doc = new Document({
+      sections: [{
+        headers: {
+          default: new Header({
+            children: [new Paragraph({ text: `Табель служения на неделю ${this.datesRange}`, style: "para" })]
+          })
+        },
+        // footers: {
+        //   default: new Footer({
+        //     children: [new Paragraph({ text: "Footer", style: "para" })]
+        //   })
+        // },
+        children: [
+          new Table({
+            width: { size: 110, type: WidthType.PERCENTAGE },
+            rows: [
+              new TableRow({
+                children: [
+                  new TableCell({
+                    children: [
+                      new Paragraph({ text: "Имя", style: "para" })
+                    ]
+                  }),
+                  new TableCell({
+                    children: [new Paragraph('Отв. на неделе')]
+                  }),
+                  new TableCell({
+                    children: [new Paragraph('Понедельник, '+ this.dates[0])]
+                  }),
+                  new TableCell({
+                    children: [new Paragraph('Вторник, '+ this.dates[1])]
+                  }),
+                  new TableCell({
+                    children: [new Paragraph('Среда, '+ this.dates[2])]
+                  }),
+                  new TableCell({
+                    children: [new Paragraph('Четверг, '+ this.dates[3])]
+                  }),
+                  new TableCell({
+                    children: [new Paragraph('Пятница, '+ this.dates[4])]
+                  }),
+                  new TableCell({
+                    children: [new Paragraph('Суббота, '+ this.dates[5])]
+                  }),
+                  new TableCell({
+                    children: [new Paragraph('Воскресенье, '+ this.dates[6])]
+                  })
+
+                ]
+              }),
+              ...usersSections,
+            ]
+          })
+        ]
+      }]
+    });
     // doc.Styles.createParagraphStyle("para", "Para").font("Calibri");
     Packer.toBlob(doc).then(blob => {
       console.log(blob);
-      saveAs(blob, "example.docx");
+      saveAs(blob, "table.docx");
       console.log("Document created successfully");
     });
   }

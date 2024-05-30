@@ -92,7 +92,8 @@
     </table>
   </div>
   <div class="b_wrap">
-    <button mat-raised-button (click)="exel()">Импорт в Excel</button>
+    <button mat-raised-button (click)="exel()" class="mr-3">Импорт в Excel</button>
+    <button mat-raised-button (click)="saveInDocFormat()">Импорт в Doc</button>
   </div>
   <div class="flex flex-col">
     <h2 class="mr-2 text-center">
@@ -112,7 +113,7 @@
         <div class="mr-1">{{requiredDay.label}} :</div>
         <div class="mr-2 text-base" *ngFor="let lost of lostServices[requiredDay.name]"> {{lost.name}} ,</div>
       </div>
-      <div *ngIf="!requiredDaysLost?.length" class="text-lg flex justify-center items-center" (click)="saveInDocFormat()">
+      <div *ngIf="!requiredDaysLost?.length" class="text-lg flex justify-center items-center">
         Все служение распределено!
       </div>
     </div>
